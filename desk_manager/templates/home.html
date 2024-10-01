@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link href="{{ url_for('static', filename='styles/home.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="wrapper-doc">
+    <main>
+        <div class="container">
+            <div class="section-container text-container">
+                <div>
+                    <h1 class="home-title">
+                        Bem-vindo ao Desk Manager!
+                    </h1>
+                    <p class="home-subtitles">
+                        O Desk Manager é uma plataforma para gerenciar aluguel de mesas para coworking.
+                    </p>
+                </div>
+            </div>
+            <div class="section-container img-section-container">
+                <img src="{{ url_for('static', filename='images/home_image.png') }}" class="image-container">
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

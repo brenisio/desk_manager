@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <!-- Form de busca -->
+        <form id="buscarClienteForm" action="" method="GET" class="form-inline d-flex mx-4" onsubmit="buscarCliente(event)">
+            <input type="text" id="cpfInput" class="form-control mr-2" placeholder="Buscar por CPF" required>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+        
+        <!-- Título -->
+        <h1 class="display-5 text-center my-0">Lista de Clientes</h1>
+
+        <!-- Botão Novo Cliente -->
+        <form action="{{ url_for('cliente.cadastrar_cliente') }}" method="GET" class="mx-4">
+            <button type="submit" class="btn btn-primary">Novo Cliente</button>
+        </form>
+    </div>
+</div>
+
+    <div class="row">
+        {% if cliente_escolhido %}
+            <div class="col-md-6 offset-md-3">
+                <h2 class="card-title"><strong>Cliente encontrado!</strong></h2>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title"><strong>Nome: {{ cliente_escolhido["nome"] }}</strong></h2>
+                        <p class="card-text"><strong>CPF:</strong> {{ cliente_escolhido["cpf"] }}</p>
+                        <p class="card-text"><strong>Telefone:</strong> {{ cliente_escolhido["telefone"] }}</p>
+                        <p class="card-text"><strong>Tipo do plano:</strong> {{ cliente_escolhido["tipo_plano"] }}</p>
+                        <p class="card-text"><strong>Saldo:</strong> {{ cliente_escolhido["saldo"] }}</p>
+                        <p class="card-text"><strong>Data do Cadastro:</strong> {{ cliente_escolhido["data_cadastro"] }}</p>
+                        <a href="{{ url_for('cliente.editar_cliente', cliente_id=cliente_escolhido['id']) }}" class="btn btn-primary">Editar</a>
+                        <form action="{{ url_for('cliente.excluir_cliente', cliente_id=cliente_escolhido['id']) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% elif clientes %}
+            {% for cliente in clientes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title"><strong>Nome: {{ cliente.nome }}</strong></h2>
+                        <p class="card-text"><strong>CPF:</strong> {{ cliente.cpf }}</p>
+                        <p class="card-text"><strong>Telefone:</strong> {{ cliente.telefone }}</p>
+                        <p class="card-text"><strong>Tipo do plano:</strong> {{ cliente.tipo_plano }}</p>
+                        <p class="card-text"><strong>Saldo:</strong> {{ cliente.saldo }}</p>
+                        <p class="card-text"><strong>Data do Cadastro:</strong> {{ cliente.data_cadastro }}</p>
+                        <a href="{{ url_for('cliente.editar_cliente', cliente_id=cliente.id) }}" class="btn btn-primary">Editar</a>
+                        <form action="{{ url_for('cliente.excluir_cliente', cliente_id=cliente.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <p class="text-center">Não há clientes cadastrados.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function buscarCliente(event) {
+        event.preventDefault();  // Previne o envio padrão do formulário
+        const cpf = document.getElementById('cpfInput').value;
+        if (cpf) {
+            const form = document.getElementById('buscarClienteForm');
+            form.action = "{{ url_for('cliente.buscar_cliente_por_cpf', cpf='') }}" + cpf;
+            form.submit();  // Submete o formulário após ajustar a URL
+        }
+    }
+</script>
+{% endblock %}
