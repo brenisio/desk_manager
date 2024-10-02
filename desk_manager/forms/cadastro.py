@@ -22,3 +22,7 @@ class FormCadastroCliente(FlaskForm):
     # imagem = FileField('', validators=[DataRequired(), FileAllowed(['jpg', 'png', 'jpeg'])])
     botao_submit = SubmitField('Cadastrar Cliente')
 
+class FormCadastroMesa(FlaskForm):
+    codigo = StringField('', validators=[DataRequired(), length(min=2, max=40)])
+    
+    botao_submit = SubmitField('Cadastrar Mesa')

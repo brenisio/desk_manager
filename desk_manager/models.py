@@ -28,3 +28,13 @@ class Cliente(db.Model):
             'saldo': self.saldo,
             'data_cadastro': self.data_cadastro.strftime('%d/%m/%Y')
         }
+
+class Mesa(db.Model):
+    id: so.Mapped[str] = so.mapped_column(sa.String, primary_key=True, default=generate_hex_id)
+    codigo: so.Mapped[str] = so.mapped_column(sa.String, nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'codigo': self.codigo
+        }

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="text-center mb-4">
+        <h1>Lista de Mesas</h1>
+    </div>
+
+
+
+    <!-- Campo de Busca por código -->
+    <div class="row mb-4">
+        <div style="background-color: lightblue">
+            <a href="{{ url_for('mesa.cadastrar_mesa') }}">Nova Mesa</a>
+        </div>
+        <div class="col-md-6 offset-md-3">
+            <form id="buscarMesaForm" action="" method="GET" class="form-inline justify-content-center" onsubmit="buscarMesa(event)">
+                <input type="text" id="codigoInput" class="form-control mr-2" placeholder="Buscar por código" required>
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if mesa_escolhida %}
+            <div class="col-md-6 offset-md-3">
+                <h2 class="card-title"><strong>Mesa encontrada!</strong></h2>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title"><strong>Dados da Mesa</strong></h2>
+                        <p class="card-text"><strong>Código:</strong> {{ mesa_escolhida["codigo"] }}</p>
+                        <a href="/editar_mesa" class="btn btn-primary">Editar</a>
+                        <form action="/cadastrar_mesa" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% elif mesas %}
+            {% for mesa in mesas %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title"><strong>Dados da Mesa</strong></h2>
+                        <p class="card-text"><strong>Código:</strong> {{ mesa.codigo }}</p>
+                        <a href="{{ url_for('mesa.editar_mesa', mesa_id=mesa.id) }}" class="btn btn-primary">Editar</a>
+                        <form action="{{ url_for('mesa.excluir_mesa', mesa_id=mesa.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <p class="text-center">Não há mesas cadastradas.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function buscarMesa(event) {
+        event.preventDefault();  // Previne o envio padrão do formulário
+        const codigo = document.getElementById('codigoInput').value;
+        if (codigo) {
+            const form = document.getElementById('buscarMesaForm');
+            form.action = "{{ url_for('mesa.buscar_mesa_por_codigo', codigo='') }}" + codigo;
+            form.submit();  // Submete o formulário após ajustar a URL
+        }
+    }
+</script>
+{% endblock %}

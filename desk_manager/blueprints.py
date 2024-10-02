@@ -5,3 +5,5 @@ def registrar_blueprints(app):
     from .routes.cliente import CLIENTE
     app.register_blueprint(CLIENTE)
 
+    from .routes.mesa import MESA
+    app.register_blueprint(MESA)
