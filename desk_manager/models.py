@@ -31,10 +31,10 @@ class Cliente(db.Model):
 
 class Mesa(db.Model):
     id: so.Mapped[str] = so.mapped_column(sa.String, primary_key=True, default=generate_hex_id)
-    codigo: so.Mapped[str] = so.mapped_column(sa.String, nullable=False)
+    numero: so.Mapped[str] = so.mapped_column(sa.String, nullable=False)
 
     def to_dict(self):
         return {
             'id': self.id,
-            'codigo': self.codigo
+            'numero': self.numero
         }

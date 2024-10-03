@@ -23,6 +23,6 @@ class FormCadastroCliente(FlaskForm):
     botao_submit = SubmitField('Cadastrar Cliente')
 
 class FormCadastroMesa(FlaskForm):
-    codigo = StringField('', validators=[DataRequired(), length(min=2, max=40)])
+    numero = StringField('', validators=[DataRequired(), length(min=1, max=40)])
     
     botao_submit = SubmitField('Cadastrar Mesa')

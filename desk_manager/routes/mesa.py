@@ -20,7 +20,7 @@ def editar_mesa(mesa_id):
 @MESA.route('/mesa/<string:mesa_id>/editar', methods=['POST'])
 def atualizar_mesa(mesa_id):
     mesa = Mesa.query.get(mesa_id)
-    mesa.codigo = request.form['codigo']
+    mesa.numero = request.form['numero']
     db.session.commit()
     return redirect(url_for('mesa.lista_mesas'))
 
@@ -32,9 +32,9 @@ def excluir_mesa(mesa_id):
     return redirect(url_for('mesa.lista_mesas'))
     
 
-@MESA.route('/buscar_mesa/<string:codigo>', methods=['GET'])
-def buscar_mesa_por_codigo(codigo):
-    mesa = Mesa.query.filter_by(codigo=codigo).first()
+@MESA.route('/buscar_mesa/<string:numero>', methods=['GET'])
+def buscar_mesa_por_numero(numero):
+    mesa = Mesa.query.filter_by(numero=numero).first()
     if not mesa:
         return render_template('lista_mesas.html', mesa_escolhida=None)
     return render_template('lista_mesas.html', mesa_escolhida=mesa.to_dict())
@@ -47,7 +47,7 @@ def cadastrar_mesa():
 
         mesa = Mesa(
             id = id,
-            codigo = form_cadastro_mesa.codigo.data,
+            numero = form_cadastro_mesa.numero.data,
         )
         db.session.add(mesa)
         db.session.commit()

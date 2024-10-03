@@ -5,10 +5,10 @@
     <h1 class="text-center mb-0">Editar Mesa</h1>
     <form action="{{ url_for('mesa.editar_mesa', mesa_id=mesa.id) }}" method="POST">
         <div class="form-group">
-            <label for="codigo">Código</label>
-            <input type="text" class="form-control" id="codigo" name="codigo" value="{{ mesa.codigo }}" required>
+            <label for="numero">Número</label>
+            <input type="text" class="form-control" id="numero" name="numero" value="{{ mesa.numero }}" required>
         </div>
-        <form action="{{ url_for('mesa.atualizar_mesa', mesa_id=id_mesa) }}" method="POST">
+        <form aCCtion="{{ url_for('mesa.atualizar_mesa', mesa_id=id_mesa) }}" method="POST">
             <button type="submit" class="btn btn-success">Salvar Alterações</button>
             <a href="{{ url_for('mesa.lista_mesas') }}" class="btn btn-secondary">Cancelar</a>
         </form>

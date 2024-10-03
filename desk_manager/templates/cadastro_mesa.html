@@ -11,16 +11,16 @@
         <h1 class="form-title">Cadastro de Mesa</h1>
 
         <div class="form-group">
-            <label class="form-control-label">Código</label>
-            {% if form_cadastro_mesa.codigo.errors %}
-                {{ form_cadastro_mesa.codigo(class="form-control is-invalid") }}
+            <label class="form-control-label">Número</label>
+            {% if form_cadastro_mesa.numero.errors %}
+                {{ form_cadastro_mesa.numero(class="form-control is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for erro in form_cadastro_mesa.codigo.errors %}
+                    {% for erro in form_cadastro_mesa.numero.errors %}
                         {{ erro }}
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form_cadastro_mesa.codigo(class="form-control") }}
+                {{ form_cadastro_mesa.numero(class="form-control") }}
             {% endif %}
         </div>
 
