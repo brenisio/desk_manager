@@ -38,3 +38,15 @@ class Mesa(db.Model):
             'id': self.id,
             'numero': self.numero
         }
+
+class Plano(db.Model):
+    id: so.Mapped[str] = so.mapped_column(sa.String, primary_key=True, default=generate_hex_id)
+    nome_do_plano: so.Mapped[str] = so.mapped_column(sa.String, nullable=False)
+    quantidade_de_usos: so.Mapped[int] = so.mapped_column(sa.Integer, nullable=False)
+
+    def to_dict(self):
+        return{
+            'id': self.id,
+            'nome_do_plano': self.nome_do_plano,
+            'quantidade_de_usos': self.quantidade_de_usos
+        }
