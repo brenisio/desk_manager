@@ -29,7 +29,7 @@ class FormCadastroMesa(FlaskForm):
     
     botao_submit = SubmitField('Cadastrar Mesa')
 
-class FormTiposPlano(FlaskForm):
+class FormCadastroPlano(FlaskForm):
     nome_do_plano = StringField('', validators=[DataRequired()])
     quantidade_de_usos = IntegerField('', validators=[DataRequired()], render_kw={"placeholder": 'Ex: 5'})
 

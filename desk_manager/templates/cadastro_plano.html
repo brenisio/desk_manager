@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link href="{{ url_for('static', filename='styles/form-box.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="wrapper-doc">
+    <form method="POST" action="" class="container" enctype="multipart/form-data">
+        {{ form_cadastro_plano.csrf_token }}
+        <h1 class="form-title">Cadastro de Plano</h1>
+
+        <div class="form-group">
+            <label class="form-control-label">Nome do Plano</label>
+            {% if form_cadastro_plano.nome_do_plano.errors %}
+                {{ form_cadastro_plano.nome_do_plano(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for erro in form_cadastro_plano.nome_do_plano.errors %}
+                        {{ erro }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form_cadastro_plano.nome_do_plano(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-control-label">Quantidade de Usos</label>
+            {% if form_cadastro_plano.quantidade_de_usos.errors %}
+                {{ form_cadastro_plano.quantidade_de_usos(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for erro in form_cadastro_plano.quantidade_de_usos.errors %}
+                        {{ erro }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form_cadastro_plano.quantidade_de_usos(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form_cadastro_plano.botao_submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
