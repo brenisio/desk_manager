@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+
+        <form id="buscarPlanoForm" action="" method="GET" class="form-inline justify-content-center" onsubmit="buscarPlano(event)">
+            <input type="text" id="nome_do_planoInput" class="form-control mr-2" placeholder="Buscar por nome" required>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+
+        <h1 class="display-5 text-center my-0 offset-mr-1">Lista de Planos</h1>
+
+        <form action="{{ url_for('plano.cadastrar_plano') }}" method="GET" class="mx-4">
+            <button type="submit" class="btn btn-primary">Novo Plano</button>
+        </form>
+        
+    </div>
+</div>
+    <div class="row">
+        {% if plano_escolhido %}
+            <div class="col-md-6 offset-md-3">
+                <h2 class="card-title"><strong>Plano encontrado!</strong></h2>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title"><strong>Dados do Plano</strong></h2>
+                        <p class="card-text"><strong>Nome do Plano:</strong> {{ plano_escolhido["nome_do_plano"] }}</p>
+                        <p class="card-text"><strong>Quantidade de Usos:</strong> {{ plano_escolhido["quantidade_de_usos"] }}</p>
+                        <a href="/editar_plano" class="btn btn-primary">Editar</a>
+                        <form action="/cadastrar_plano" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% elif planos %}
+            {% for plano in planos %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title"><strong>Dados do Plano</strong></h2>
+                        <p class="card-text"><strong>Nome do Plano:</strong> {{ plano["nome_do_plano"] }}</p>
+                        <p class="card-text"><strong>Quantidade de Usos:</strong> {{ plano["quantidade_de_usos"] }}</p>
+                        <a href="{{ url_for('plano.editar_plano', plano_id=plano.id) }}" class="btn btn-primary">Editar</a>
+                        <form action="{{ url_for('plano.excluir_plano', plano_id=plano.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <p class="text-center">Não há planos cadastrados.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function buscarPlano(event) {
+        event.preventDefault();  // Previne o envio padrão do formulário
+        const nome_do_plano = document.getElementById('nome_do_planoInput').value;
+        if (nome_do_plano) {
+            const form = document.getElementById('buscarPlanoForm');
+            form.action = "{{ url_for('plano.buscar_plano_por_nome', nome_do_plano='') }}" + nome_do_plano;
+            form.submit();  // Submete o formulário após ajustar a URL
+        }
+    }
+</script>
+{% endblock %}

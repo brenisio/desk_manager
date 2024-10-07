@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container my-5">
+    <h1 class="text-center mb-0">Editar Plano</h1>
+    <form action="{{ url_for('plano.editar_plano', plano_id=plano.id) }}" method="POST">
+        <div class="form-group">
+            <label for="nome_do_plano">Nome do Plano</label>
+            <input type="text" class="form-control" id="nome_do_plano" name="nome_do_plano" value="{{ plano.nome }}" required>
+        </div>
+        <div class="form-group">
+            <label for="quantidade_de_usos">Quantidade de Usos</label>
+            <input type="text" class="form-control" id="quantidade_de_usos" name="quantidade_de_usos"
+                   value="{{ plano.quantidade_de_usos }}" required>
+        </div>
+        <form action="{{ url_for('cliente.atualizar_cliente', cliente_id=id_cliente) }}" method="POST">
+            <button type="submit" class="btn btn-success">Salvar Alterações</button>
+            <a href="{{ url_for('plano.lista_planos') }}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </form>
+</div>
+{% endblock %}
