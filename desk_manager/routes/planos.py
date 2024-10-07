@@ -11,13 +11,13 @@ PLANO = Blueprint('plano', __name__)
 def lista_planos():
     planos = Plano.query.all()
     planos_dict = [plano.to_dict() for plano in planos]
-    return render_template('lista_planos.html', planos=planos_dict)
+    return render_template('lista_planos.html', planos=planos_dict, plano_escolhido=None)
 
 
 @PLANO.route('/plano/<string:plano_id>/editar', methods=['GET'])
 def editar_plano(plano_id):
     plano = Plano.query.get(plano_id)
-    return render_template('editar_plano.html', planos=plano)
+    return render_template('editar_planos.html', plano=plano)
 
 
 @PLANO.route('/plano/<string:plano_id>/editar', methods=['POST'])
@@ -39,10 +39,11 @@ def excluir_plano(plano_id):
 
 @PLANO.route('/buscar_plano/<string:nome_do_plano>', methods=['GET'])
 def buscar_plano_por_nome(nome_do_plano):
-    plano = Plano.query.filter_by(nome=nome_do_plano).first()
+    plano = Plano.query.filter_by(nome_do_plano=nome_do_plano).first()
     if not plano:
         return render_template('lista_planos.html', plano_escolhido=None)
-    return render_template('lista_mesas.html', plano_escohido=plano.to_dict())
+    plano_escolhido = plano.to_dict()
+    return render_template('lista_planos.html', plano_escolhido=plano_escolhido)
 
 
 @PLANO.route('/cadastro_plano', methods=['GET', 'POST'])
