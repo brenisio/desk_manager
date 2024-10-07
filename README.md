@@ -34,13 +34,22 @@ Este projeto tem como objetivo proporcionar um ambiente de fácil gestão para c
 
 ## Fluxo do Site
 ### 1. Home
-Página inicial da plataforma, onde os gestores podem visualizar as principais funcionalidades do sistema.
+Página inicial da plataforma, onde o gestor pode visualizar as principais funcionalidades do sistema.
 
 ### 2. Acessando
-Os gestores podem acessar o sistema diretamente, sem a necessidade de login na versão atual.
+O gestor pode acessar o sistema diretamente, sem a necessidade de login na versão atual.
 
-### 3. Criar Cliente
+### 3. Crud Cliente
 O gestor pode cadastrar novos clientes, informando nome, CPF e telefone.
+Consegue excluir, editar, buscar e listar.
+
+### 4. Crud Mesa
+O gestor pode cadastrar novas mesas, informando numero da mesa.
+Consegue excluir, editar, buscar e listar.
+
+### 5. Crud Plano
+O gestor pode cadastrar novos planos, informando nome do plano e a quantidade de usos.
+Consegue excluir, editar, buscar e listar.
 
 ## Tecnologias Utilizadas
 - **Python** com **Flask**
