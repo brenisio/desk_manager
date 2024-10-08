@@ -27,7 +27,7 @@ class FormCadastroCliente(FlaskForm):
     botao_submit = SubmitField('Cadastrar Cliente')
 
 class FormCadastroMesa(FlaskForm):
-    numero = IntegerField('', widget=TextInput(), validators=[DataRequired(message="'Este campo deve conter apenas numeros'"), 
+    numero = IntegerField('', widget=TextInput(), validators=[DataRequired(message='Este campo deve conter apenas numeros'),
                                                               NumberRange(min=1, max=99999999)])
     
     botao_submit = SubmitField('Cadastrar Mesa')
@@ -39,6 +39,9 @@ class FormCadastroMesa(FlaskForm):
 
 class FormCadastroPlano(FlaskForm):
     nome_do_plano = StringField('', validators=[DataRequired()])
-    quantidade_de_usos = IntegerField('', validators=[DataRequired()], render_kw={"placeholder": 'Ex: 5'})
+    quantidade_de_usos = IntegerField('', validators=[DataRequired(),
+                                                      NumberRange(min=1, message='A quantidade de usos dever '
+                                                                                 'ser maior que zero')],
+                                      render_kw={"placeholder": 'Ex: 5'})
 
     botao_submit = SubmitField('Cadastrar Plano')

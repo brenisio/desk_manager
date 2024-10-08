@@ -2,7 +2,7 @@ from desk_manager.models import PlanoDeUso
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from desk_manager.extensions import db
 from desk_manager.forms.cadastro import FormCadastroPlano
-from desk_manager.validators.validadores import ValidaNumero, ValidaString
+from desk_manager.validators.validadores import ValidaNumero, ValidaString, verifica_plano_existente
 import uuid
 
 
@@ -33,6 +33,9 @@ def atualizar_plano(plano_id):
     if not ValidaNumero('Quantidade de usos deve ser um numero!')(quantidade_de_usos):
         return redirect(url_for('plano.editar_plano', plano_id=plano_id))
 
+    if not verifica_plano_existente(nome_do_plano, plano_atual=plano):
+        return redirect(url_for('plano.editar_plano', plano_id=plano_id))
+
     plano.nome_do_plano = nome_do_plano
     plano.quantidade_de_usos = int(quantidade_de_usos)
     db.session.commit()
@@ -61,7 +64,14 @@ def buscar_plano_por_nome(nome_do_plano):
 @PLANO.route('/cadastro_plano', methods=['GET', 'POST'])
 def cadastrar_plano():
     form_cadastro_plano = FormCadastroPlano()
+
     if form_cadastro_plano.validate_on_submit():
+
+        nome_do_plano = form_cadastro_plano.nome_do_plano.data
+
+        if not verifica_plano_existente(nome_do_plano):
+            return redirect(url_for('plano.cadastrar_plano'))
+
         id = uuid.uuid4().hex[:8]
 
         plano = PlanoDeUso(
@@ -69,6 +79,7 @@ def cadastrar_plano():
             nome_do_plano=form_cadastro_plano.nome_do_plano.data,
             quantidade_de_usos=form_cadastro_plano.quantidade_de_usos.data,
         )
+
         db.session.add(plano)
         db.session.commit()
         flash('Plano cadastrado com sucesso!', 'alert alert-success')
