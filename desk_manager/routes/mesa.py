@@ -2,6 +2,7 @@ from desk_manager.models import Mesa
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from desk_manager.extensions import db
 from desk_manager.forms.cadastro import FormCadastroMesa
+from desk_manager.validators.validadores import ValidaNumero, verifica_mesa_existente
 import uuid
 
 MESA = Blueprint('mesa', __name__)
@@ -20,7 +21,16 @@ def editar_mesa(mesa_id):
 @MESA.route('/mesa/<string:mesa_id>/editar', methods=['POST'])
 def atualizar_mesa(mesa_id):
     mesa = Mesa.query.get(mesa_id)
-    mesa.numero = request.form['numero']
+    numero = request.form['numero']
+    
+
+    if not ValidaNumero('Número da mesa deve ser um numero!')(numero):
+        return redirect(url_for('mesa.editar_mesa', mesa_id=mesa_id))
+    
+    if not verifica_mesa_existente(numero, mesa_atual=mesa):
+        return redirect(url_for('mesa.editar_mesa', mesa_id=mesa_id))
+
+    mesa.numero = numero
     db.session.commit()
     return redirect(url_for('mesa.lista_mesas'))
 

@@ -2,7 +2,9 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField
 from wtforms.fields.numeric import IntegerField
-from wtforms.validators import DataRequired, length, ValidationError
+from wtforms.validators import DataRequired, length, ValidationError, NumberRange
+from wtforms.widgets import TextInput
+from desk_manager.models import Mesa
 
 def validate_cpf(form, field):
     cpf = field.data
@@ -25,9 +27,15 @@ class FormCadastroCliente(FlaskForm):
     botao_submit = SubmitField('Cadastrar Cliente')
 
 class FormCadastroMesa(FlaskForm):
-    numero = StringField('', validators=[DataRequired(), length(min=1, max=40)])
+    numero = IntegerField('', widget=TextInput(), validators=[DataRequired(message="'Este campo deve conter apenas numeros'"), 
+                                                              NumberRange(min=1, max=99999999)])
     
     botao_submit = SubmitField('Cadastrar Mesa')
+
+    def validate_numero(self, field):
+        mesa_existente = Mesa.query.filter_by(numero=field.data).first()
+        if mesa_existente:
+            raise ValidationError('Uma mesa com esse número já existe.')
 
 class FormCadastroPlano(FlaskForm):
     nome_do_plano = StringField('', validators=[DataRequired()])
