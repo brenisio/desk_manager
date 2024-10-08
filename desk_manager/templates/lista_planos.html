@@ -17,6 +17,7 @@
         
     </div>
 </div>
+
     <div class="row">
         {% if plano_escolhido %}
             <div class="col-md-6 offset-md-3">
@@ -33,6 +34,7 @@
                     </div>
                 </div>
             </div>
+
         {% elif planos %}
             {% for plano in planos %}
             <div class="col-md-6 col-lg-4 mb-4">
@@ -49,12 +51,14 @@
                 </div>
             </div>
             {% endfor %}
+
         {% else %}
             <div class="col-12">
                 <p class="text-center">Não há planos cadastrados.</p>
             </div>
         {% endif %}
     </div>
+
 </div>
 {% endblock %}
 

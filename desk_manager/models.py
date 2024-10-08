@@ -39,7 +39,7 @@ class Mesa(db.Model):
             'numero': self.numero
         }
 
-class Plano(db.Model):
+class PlanoDeUso(db.Model):
     id: so.Mapped[str] = so.mapped_column(sa.String, primary_key=True, default=generate_hex_id)
     nome_do_plano: so.Mapped[str] = so.mapped_column(sa.String, nullable=False)
     quantidade_de_usos: so.Mapped[int] = so.mapped_column(sa.Integer, nullable=False)

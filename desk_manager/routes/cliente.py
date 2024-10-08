@@ -24,7 +24,7 @@ def cadastrar_cliente():
         )
         db.session.add(cliente)
         db.session.commit()
-        flash('Cliente cadastrado com sucesso!', 'alert-success')
+        flash('Cliente cadastrado com sucesso!', 'alert alert-success')
         return redirect(url_for('home.home'))
     return render_template('cadastro_cliente.html', form_cadastro_cliente=form_cadastro_cliente)
 
