@@ -1,8 +1,10 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, DateTimeField, SelectField
 from wtforms.fields.numeric import IntegerField
 from wtforms.validators import DataRequired, length, ValidationError
+from datetime import datetime
+from desk_manager.models import PeriodoReserva
 
 def validate_cpf(form, field):
     cpf = field.data
@@ -34,3 +36,19 @@ class FormCadastroPlano(FlaskForm):
     quantidade_de_usos = IntegerField('', validators=[DataRequired()], render_kw={"placeholder": 'Ex: 5'})
 
     botao_submit = SubmitField('Cadastrar Plano')
+
+class FormCadastroReserva(FlaskForm):
+    data = StringField('dd/mm/yyyy', validators=[DataRequired()])
+    def validate_data(self, field):
+        try:
+            # Tenta converter a string para um objeto datetime
+            self.data.data = datetime.strptime(field.data, '%d/%m/%Y')
+        except ValueError:
+            raise ValidationError('Data inválida! Use o formato dd/mm/yyyy.')
+
+    periodo = SelectField('', choices=[(periodo.value, periodo.name) for periodo in PeriodoReserva],
+                          validators=[DataRequired()])
+    cpf_cliente = StringField('', validators=[DataRequired()])
+    numero_mesa = StringField('', validators=[DataRequired()])
+
+    botao_submit = SubmitField('Cadastrar Reserva')
