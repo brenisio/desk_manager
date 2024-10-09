@@ -11,6 +11,10 @@ PLANO = Blueprint('plano', __name__)
 def lista_planos():
     planos = Plano.query.all()
     planos_dict = [plano.to_dict() for plano in planos]
+    # mostra todos os clientes do plano
+    plano = Plano.query.get('8c2bbf09')
+    for cliente in plano.clientes:
+        print(cliente.nome)
     return render_template('lista_planos.html', planos=planos_dict, plano_escolhido=None)
 
 
@@ -59,6 +63,6 @@ def cadastrar_plano():
         )
         db.session.add(plano)
         db.session.commit()
-        flash('Plano cadastrado com sucesso!', 'alert-success')
+        flash('Plano cadastrado com sucesso!', 'alert alert-success')
         return redirect(url_for('home.home'))
     return render_template('cadastro_plano.html', form_cadastro_plano=form_cadastro_plano)
