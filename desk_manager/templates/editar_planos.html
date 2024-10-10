@@ -13,7 +13,7 @@
             <input type="text" class="form-control" id="quantidade_de_usos" name="quantidade_de_usos"
                    value="{{ plano.quantidade_de_usos }}" required>
         </div>
-        <form action="{{ url_for('cliente.atualizar_cliente', cliente_id=id_cliente) }}" method="POST">
+        <form action="{{ url_for('cliente.atualizar_cliente', cliente_id=cliente_id) }}" method="POST">
             <button type="submit" class="btn btn-success">Salvar Alterações</button>
             <a href="{{ url_for('plano.lista_planos') }}" class="btn btn-secondary">Cancelar</a>
         </form>

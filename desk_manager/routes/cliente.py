@@ -15,41 +15,80 @@ def cadastrar_cliente():
     if form_cadastro_cliente.validate_on_submit():
         id = uuid.uuid4().hex[:8]
 
+        # verificar cpf
+        cpf = form_cadastro_cliente.cpf.data
+        cliente = Cliente.query.filter_by(cpf=cpf).first()
+        if cliente:
+            flash('CPF já cadastrado!', 'alert alert-danger')
+            return redirect(url_for('cliente.cadastrar_cliente'))
+
         cliente = Cliente(
             id = id,
             nome = form_cadastro_cliente.nome.data,
             cpf = form_cadastro_cliente.cpf.data,
             telefone = form_cadastro_cliente.telefone.data,
-            data_cadastro = datetime.now(),
+            saldo = 1
         )
         db.session.add(cliente)
         db.session.commit()
-        flash('Cliente cadastrado com sucesso!', 'alert-success')
+        flash('Cliente cadastrado com sucesso!', 'alert alert-success')
         return redirect(url_for('home.home'))
     return render_template('cadastro_cliente.html', form_cadastro_cliente=form_cadastro_cliente)
 
 @CLIENTE.route('/clientes')
+
 def lista_clientes():
     clientes = Cliente.query.all()
     clientes_dict = [cliente.to_dict() for cliente in clientes]
+    cliente = Cliente.query.get('1ffe3bb2')
+    print(cliente.plano.nome_do_plano)
     return render_template('lista_clientes.html', clientes=clientes_dict)
 
-@CLIENTE.route('/cliente/<string:cliente_id>/editar', methods=['GET'])
+
+@CLIENTE.route('/cliente/<string:cliente_id>/editar', methods=['GET', 'POST'])
 def editar_cliente(cliente_id):
-    cliente = Cliente.query.get(cliente_id)
-    return render_template('editar_cliente.html', cliente=cliente)
+    # Busca o cliente do banco de dados pelo ID
+    cliente = Cliente.query.get_or_404(cliente_id)
 
-@CLIENTE.route('/cliente/<string:cliente_id>/editar', methods=['POST'])
-def atualizar_cliente(cliente_id):
-    cliente = Cliente.query.get(cliente_id)
-    cliente.nome = request.form['nome']
-    cliente.cpf = request.form['cpf']
-    cliente.telefone = request.form['telefone']
-    db.session.commit()
-    return redirect(url_for('cliente.lista_clientes'))
+    # Inicializa o formulário com os dados atuais do cliente
+    form = FormCadastroCliente(obj=cliente)
 
+    # Verifica se o formulário foi submetido e se é válido
+    if form.validate_on_submit():
+
+        # verificar cpf
+        cpf = form.cpf.data
+        if cpf != cliente.cpf:
+            cliente = Cliente.query.filter_by(cpf=cpf).first()
+            if cliente:
+                flash('CPF já cadastrado!', 'alert alert-danger')
+                return redirect(url_for('cliente.cadastrar_cliente'))
+
+        if cliente.nome == form.nome.data and cliente.cpf == form.cpf.data and cliente.telefone == form.telefone.data:
+            flash('Nenhum dado foi alterado.', 'alert alert-warning')
+            return redirect(url_for('cliente.lista_clientes'))
+
+        # Atualiza os dados do cliente com os valores do formulário
+        cliente.nome = form.nome.data
+        cliente.cpf = form.cpf.data
+        cliente.telefone = form.telefone.data
+
+        # Salva as alterações no banco de dados
+        db.session.commit()
+
+        # Exibe uma mensagem de sucesso
+        flash('Cliente atualizado com sucesso!', 'success')
+
+        # Redireciona para a lista de clientes ou outra página adequada
+        return redirect(url_for('cliente.lista_clientes'))
+
+    # Renderiza o template de edição, passando o formulário e o cliente
+    return render_template('editar_cliente.html', form_cadastro_cliente=form, cliente=cliente)
 @CLIENTE.route('/cliente/<string:cliente_id>/excluir', methods=['POST'])
 def excluir_cliente(cliente_id):
+
+    #ADD AQUI A CONDIÇÃO DE VERIFICAR SE O CLIENTE TEVE OU TEM UMA RESERVA
+
     cliente = Cliente.query.get(cliente_id)
     db.session.delete(cliente)
     db.session.commit()

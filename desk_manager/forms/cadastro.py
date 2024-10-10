@@ -13,17 +13,28 @@ def validate_cpf(form, field):
     if len(cpf) != 11:
         raise ValidationError('O CPF deve ter exatamente 11 dígitos.')
 
+def validate_telefone(form, field):
+    telefone = field.data
+    if not telefone.isdigit():
+        raise ValidationError('O telefone deve conter apenas números.')
+    if len(telefone) < 10:
+        raise ValidationError('O telefone deve ter no mínimo 10 dígitos.')
+    if len(telefone) > 11:
+        raise ValidationError('O telefone deve ter no máximo 11 dígitos.')
+
 class FormCadastroCliente(FlaskForm):
     nome = StringField('', validators=[DataRequired()])
     cpf = StringField('CPF', validators=[
         DataRequired(),
         length(min=11, max=11, message="O CPF deve ter exatamente 11 dígitos."),
         validate_cpf
-    ], render_kw={"placeholder": "Ex: 123.456.789-10"})
-    telefone = StringField('', validators=[DataRequired(), length(min=2, max=40)],
-                           render_kw={"placeholder": '(xx) xxxx-xxxx'})
+    ], render_kw={"placeholder": "Ex: 12345678910"})
+    telefone = StringField('', validators=[
+        DataRequired(),
+        length(min=10, max=11, message="O telefone deve ter entre 10 e 11 dígitos."),
+        validate_telefone
+    ],render_kw={"placeholder": '(xx) xxxx-xxxx'})
     
-    # imagem = FileField('', validators=[DataRequired(), FileAllowed(['jpg', 'png', 'jpeg'])])
     botao_submit = SubmitField('Cadastrar Cliente')
 
 class FormCadastroMesa(FlaskForm):

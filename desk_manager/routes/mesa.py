@@ -51,6 +51,6 @@ def cadastrar_mesa():
         )
         db.session.add(mesa)
         db.session.commit()
-        flash('Mesa cadastrada com sucesso!', 'alert-success')
+        flash('Mesa cadastrada com sucesso!', 'alert alert-success')
         return redirect(url_for('home.home'))
     return render_template('cadastro_mesa.html', form_cadastro_mesa=form_cadastro_mesa)

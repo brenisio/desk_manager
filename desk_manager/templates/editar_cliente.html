@@ -1,25 +1,57 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div class="container my-5">
-    <h1 class="text-center mb-0">Editar Cliente</h1>
-    <form action="{{ url_for('cliente.editar_cliente', cliente_id=cliente.id) }}" method="POST">
+<div class="wrapper-doc">
+    <form method="POST" action="{{ url_for('cliente.editar_cliente', cliente_id=cliente.id) }}" class="container" enctype="multipart/form-data">
+        {{ form_cadastro_cliente.csrf_token }}
+        <h1 class="form-title">Editar Cliente</h1>
+
         <div class="form-group">
-            <label for="nome">Nome Completo</label>
-            <input type="text" class="form-control" id="nome" name="nome" value="{{ cliente.nome }}" required>
+            <label class="form-control-label">Nome Completo</label>
+            {% if form_cadastro_cliente.nome.errors %}
+                {{ form_cadastro_cliente.nome(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for erro in form_cadastro_cliente.nome.errors %}
+                        {{ erro }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form_cadastro_cliente.nome(class="form-control") }}
+            {% endif %}
         </div>
+
         <div class="form-group">
-            <label for="cpf">CPF</label>
-            <input type="text" class="form-control" id="cpf" name="cpf" value="{{ cliente.cpf }}" required>
+            <label class="form-control-label">CPF</label>
+            {% if form_cadastro_cliente.cpf.errors %}
+                {{ form_cadastro_cliente.cpf(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for erro in form_cadastro_cliente.cpf.errors %}
+                        {{ erro }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form_cadastro_cliente.cpf(class="form-control") }}
+            {% endif %}
         </div>
+
         <div class="form-group">
-            <label for="telefone">Telefone</label>
-            <input type="text" class="form-control" id="telefone" name="telefone" value="{{ cliente.telefone }}" required>
+            <label class="form-control-label">Telefone</label>
+            {% if form_cadastro_cliente.telefone.errors %}
+                {{ form_cadastro_cliente.telefone(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for erro in form_cadastro_cliente.telefone.errors %}
+                        {{ erro }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form_cadastro_cliente.telefone(class="form-control") }}
+            {% endif %}
         </div>
-        <form action="{{ url_for('cliente.atualizar_cliente', cliente_id=id_cliente) }}" method="POST">
-            <button type="submit" class="btn btn-success">Salvar Alterações</button>
+
+        <div class="form-group">
+            {{ form_cadastro_cliente.botao_submit(class="btn btn-success", value="Salvar Alterações") }}
             <a href="{{ url_for('cliente.lista_clientes') }}" class="btn btn-secondary">Cancelar</a>
-        </form>
+        </div>
     </form>
 </div>
 {% endblock %}

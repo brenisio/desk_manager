@@ -27,9 +27,8 @@
                         <h2 class="card-title"><strong>Nome: {{ cliente_escolhido["nome"] }}</strong></h2>
                         <p class="card-text"><strong>CPF:</strong> {{ cliente_escolhido["cpf"] }}</p>
                         <p class="card-text"><strong>Telefone:</strong> {{ cliente_escolhido["telefone"] }}</p>
-                        <p class="card-text"><strong>Tipo do plano:</strong> {{ cliente_escolhido["tipo_plano"] }}</p>
+                        <p class="card-text"><strong>Tipo do plano:</strong> {{ cliente_escolhido["plano"] }}</p>
                         <p class="card-text"><strong>Saldo:</strong> {{ cliente_escolhido["saldo"] }}</p>
-                        <p class="card-text"><strong>Data do Cadastro:</strong> {{ cliente_escolhido["data_cadastro"] }}</p>
                         <a href="{{ url_for('cliente.editar_cliente', cliente_id=cliente_escolhido['id']) }}" class="btn btn-primary">Editar</a>
                         <form action="{{ url_for('cliente.excluir_cliente', cliente_id=cliente_escolhido['id']) }}" method="POST" style="display:inline;">
                             <button type="submit" class="btn btn-danger">Excluir</button>
@@ -45,9 +44,8 @@
                         <h2 class="card-title"><strong>Nome: {{ cliente.nome }}</strong></h2>
                         <p class="card-text"><strong>CPF:</strong> {{ cliente.cpf }}</p>
                         <p class="card-text"><strong>Telefone:</strong> {{ cliente.telefone }}</p>
-                        <p class="card-text"><strong>Tipo do plano:</strong> {{ cliente.tipo_plano }}</p>
                         <p class="card-text"><strong>Saldo:</strong> {{ cliente.saldo }}</p>
-                        <p class="card-text"><strong>Data do Cadastro:</strong> {{ cliente.data_cadastro }}</p>
+                        <p class="card-text"><strong>Plano:</strong> {{ cliente.plano }}</p>
                         <a href="{{ url_for('cliente.editar_cliente', cliente_id=cliente.id) }}" class="btn btn-primary">Editar</a>
                         <form action="{{ url_for('cliente.excluir_cliente', cliente_id=cliente.id) }}" method="POST" style="display:inline;">
                             <button type="submit" class="btn btn-danger">Excluir</button>
