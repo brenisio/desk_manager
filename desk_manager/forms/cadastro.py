@@ -38,16 +38,16 @@ class FormCadastroPlano(FlaskForm):
     botao_submit = SubmitField('Cadastrar Plano')
 
 class FormCadastroReserva(FlaskForm):
-    data = StringField('dd/mm/yyyy', validators=[DataRequired()])
+    data = StringField('', validators=[DataRequired()])
     def validate_data(self, field):
         try:
             # Tenta converter a string para um objeto datetime
             self.data.data = datetime.strptime(field.data, '%d/%m/%Y')
         except ValueError:
             raise ValidationError('Data inválida! Use o formato dd/mm/yyyy.')
-
+        
     periodo = SelectField('', choices=[(periodo.value, periodo.name) for periodo in PeriodoReserva],
-                          validators=[DataRequired()])
+                           validators=[DataRequired()])
     cpf_cliente = StringField('', validators=[DataRequired()])
     numero_mesa = StringField('', validators=[DataRequired()])
 
