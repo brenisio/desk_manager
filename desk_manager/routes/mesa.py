@@ -1,4 +1,4 @@
-from desk_manager.models import Mesa
+from desk_manager.models import Mesa, Reserva
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from desk_manager.extensions import db
 from desk_manager.forms.cadastro import FormCadastroMesa
@@ -27,6 +27,12 @@ def atualizar_mesa(mesa_id):
 @MESA.route('/mesa/<string:mesa_id>/excluir', methods=['POST'])
 def excluir_mesa(mesa_id):
     mesa = Mesa.query.get(mesa_id)
+
+    for reserva in Reserva.query.all():
+        if (reserva.mesa == mesa) and (reserva.estado == 1 or reserva.estado == 3):
+            flash('Não é possível excluir mesas reservadas.', 'warning')
+            return redirect(url_for('mesa.lista_mesas'))
+
     db.session.delete(mesa)
     db.session.commit()
     return redirect(url_for('mesa.lista_mesas'))

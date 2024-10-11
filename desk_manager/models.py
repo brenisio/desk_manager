@@ -63,9 +63,6 @@ class PlanoDeUso(db.Model):
     # Relacionamento com Cliente
     clientes: so.Mapped[list["Cliente"]] = so.relationship("Cliente", back_populates="plano")
 
-    reservas: so.Mapped[list["Reserva"]] = so.relationship("Reserva", back_populates="plano")
-
-
     def to_dict(self):
         return {
             'id': self.id,
@@ -100,15 +97,11 @@ class Reserva(db.Model):
     mesa: so.Mapped[Mesa] = so.relationship(Mesa, back_populates="reservas")
     mesa_id: so.Mapped[str] = so.mapped_column(sa.String, sa.ForeignKey("mesa.id"), nullable=False)
 
-    tipo_plano_id: so.Mapped[str] = so.mapped_column(sa.String, sa.ForeignKey("plano.id"), nullable=True)
-    plano: so.Mapped["PlanoDeUso"] = so.relationship("PlanoDeUso", back_populates="reservas")
-
-
     def to_dict(self):
         return {
             'id': self.id,
             'codigo': self.codigo,
-            'data': self.data,
+            'data': self.data.strftime('%d/%m/%Y'),
             'periodo': self.periodo,
             'estado': self.estado,
             'cliente': self.cliente,
