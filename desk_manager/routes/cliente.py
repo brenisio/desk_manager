@@ -41,7 +41,7 @@ def lista_clientes():
     clientes = Cliente.query.all()
     clientes_dict = [cliente.to_dict() for cliente in clientes]
     cliente = Cliente.query.get('1ffe3bb2')
-    print(cliente.plano.nome_do_plano)
+    #print(cliente.plano.nome_do_plano)
     return render_template('lista_clientes.html', clientes=clientes_dict)
 
 

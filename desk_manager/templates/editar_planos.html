@@ -1,22 +1,43 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div class="container my-5">
-    <h1 class="text-center mb-0">Editar Plano</h1>
-    <form action="{{ url_for('plano.editar_plano', plano_id=plano.id) }}" method="POST">
+<div class="wrapper-doc">
+    <form method="POST" action="{{ url_for('plano.editar_plano', plano_id=plano.id) }}" class="container" enctype="multipart/form-data">
+        {{ form_cadastro_plano.csrf_token }}
+        <h1 class="form-title">Editar Plano</h1>
+
         <div class="form-group">
-            <label for="nome_do_plano">Nome do Plano</label>
-            <input type="text" class="form-control" id="nome_do_plano" name="nome_do_plano" value="{{ plano.nome }}" required>
+            <label class="form-control-label">Nome do Plano</label>
+            {% if form_cadastro_plano.nome_do_plano.errors %}
+                {{ form_cadastro_plano.nome_do_plano(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for erro in form_cadastro_plano.nome_do_plano.errors %}
+                        {{ erro }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form_cadastro_plano.nome_do_plano(class="form-control") }}
+            {% endif %}
         </div>
+
         <div class="form-group">
-            <label for="quantidade_de_usos">Quantidade de Usos</label>
-            <input type="text" class="form-control" id="quantidade_de_usos" name="quantidade_de_usos"
-                   value="{{ plano.quantidade_de_usos }}" required>
+            <label class="form-control-label">Quantidade de Usos</label>
+            {% if form_cadastro_plano.quantidade_de_usos.errors %}
+                {{ form_cadastro_plano.quantidae_de_usos(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for erro in form_cadastro_plano.quantidade_de_usos.errors %}
+                        {{ erro }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{form_cadastro_plano.quantidade_de_usos(class="form-control") }}
+            {% endif %}
         </div>
-        <form action="{{ url_for('cliente.atualizar_cliente', cliente_id=cliente_id) }}" method="POST">
-            <button type="submit" class="btn btn-success">Salvar Alterações</button>
+
+        <div class="form-group">
+            {{form_cadastro_plano.botao_submit(class="btn btn-success", value="Salvar ALterações") }}
             <a href="{{ url_for('plano.lista_planos') }}" class="btn btn-secondary">Cancelar</a>
-        </form>
+        </div>
     </form>
 </div>
 {% endblock %}
