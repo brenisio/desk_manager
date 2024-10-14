@@ -104,6 +104,12 @@ def cadastrar_reserva():
         if not mesa:
             flash('Mesa não encontrada.', 'warning')
             return redirect(url_for('reserva.cadastrar_reserva'))
+        
+        # Verifica se o cliente tem saldo para reservar
+        if cliente.saldo < 1:
+            flash('Cliente não tem saldo suficiente', 'warning')
+            return redirect(url_for('reserva.cadastrar_reserva'))
+
         data_reserva = form_cadastro_reserva.data.data
         data_formatada = data_reserva.strftime("%d%m%Y")
 
@@ -114,26 +120,24 @@ def cadastrar_reserva():
         if data_reserva < datetime.now():
             flash('Data inválida.', 'warning')
             return redirect(url_for('reserva.cadastrar_reserva'))
+        
         for reserva_bd in Reserva.query.all():
 
-            # print(f'Data atual: {data_reserva} - Comparando com: {reserva_bd.data.date()}')
-
-            # print(f'Periodo atual: {periodo_reserva_value} - Comparando com: {reserva_bd.periodo}')
-
-            # print(f'Mesa atual: {mesa} - Comparando com: {reserva_bd.mesa}')
-
-            # print(f'Comparando com int 2: {reserva_bd.estado}')
-
-            # print('-----Próxima reserva------')
+            if (cliente == reserva_bd.cliente and
+                data_reserva == reserva_bd.data and
+                periodo_reserva_value == reserva_bd.periodo and
+                reserva_bd.estado != 2):
+                flash('O cliente já tem outra reserva nesse período.', 'warning')
+                return redirect(url_for('reserva.cadastrar_reserva'))
 
             if (data_reserva == reserva_bd.data and
                 periodo_reserva_value == reserva_bd.periodo and
                 mesa == reserva_bd.mesa and
                 reserva_bd.estado != 2):
-                flash('Já existe uma reseva neste período.', 'warning')
+                flash('A mesa já está resevada neste período.', 'warning')
                 return redirect(url_for('reserva.cadastrar_reserva'))
         
-
+        # Define o código (data + digito do periodo + numero da mesa)
         codigo_reserva = str(data_formatada) + str(periodo_reserva) + str(numero_mesa)
 
         reserva = Reserva(
