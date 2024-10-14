@@ -1,17 +1,23 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, SubmitField, DateTimeField, SelectField
+from wtforms import StringField, SubmitField, DateTimeField, SelectField, HiddenField
 from wtforms.fields.numeric import IntegerField
 from wtforms.validators import DataRequired, length, ValidationError
 from datetime import datetime
-from desk_manager.models import PeriodoReserva
+from desk_manager.models import PeriodoReserva, Cliente
+
 
 def validate_cpf(form, field):
     cpf = field.data
     if not cpf.isdigit():
         raise ValidationError('O CPF deve conter apenas números.')
+
     if len(cpf) != 11:
         raise ValidationError('O CPF deve ter exatamente 11 dígitos.')
+
+    cliente_repetido = Cliente.query.filter_by(cpf=cpf).first()
+    if cliente_repetido and cliente_repetido.id != form.id.data:
+        raise ValidationError('CPF já cadastrado por outro cliente.')
 
 def validate_telefone(form, field):
     telefone = field.data
@@ -23,6 +29,7 @@ def validate_telefone(form, field):
         raise ValidationError('O telefone deve ter no máximo 11 dígitos.')
 
 class FormCadastroCliente(FlaskForm):
+    id = HiddenField('ID')
     nome = StringField('', validators=[DataRequired()])
     cpf = StringField('CPF', validators=[
         DataRequired(),

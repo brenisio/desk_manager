@@ -55,15 +55,6 @@ def editar_cliente(cliente_id):
 
     # Verifica se o formulário foi submetido e se é válido
     if form.validate_on_submit():
-
-        # verificar cpf
-        cpf = form.cpf.data
-        if cpf != cliente.cpf:
-            cliente = Cliente.query.filter_by(cpf=cpf).first()
-            if cliente:
-                flash('CPF já cadastrado!', 'alert alert-danger')
-                return redirect(url_for('cliente.cadastrar_cliente'))
-
         if cliente.nome == form.nome.data and cliente.cpf == form.cpf.data and cliente.telefone == form.telefone.data:
             flash('Nenhum dado foi alterado.', 'alert alert-warning')
             return redirect(url_for('cliente.lista_clientes'))
