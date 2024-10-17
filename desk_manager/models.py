@@ -102,8 +102,8 @@ class Reserva(db.Model):
             'id': self.id,
             'codigo': self.codigo,
             'data': self.data.strftime('%d/%m/%Y'),
-            'periodo': self.periodo,
-            'estado': self.estado,
+            'periodo': PeriodoReserva(self.periodo).name,
+            'estado': EstadoReserva(self.estado).name,
             'cliente': self.cliente,
             'mesa': self.mesa
         }

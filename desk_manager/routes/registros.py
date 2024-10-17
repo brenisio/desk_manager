@@ -1,4 +1,4 @@
-from crypt import methods
+#from crypt import methods
 
 from desk_manager.models import PlanoDeUso
 from flask import Blueprint, render_template, request, redirect, url_for, flash
