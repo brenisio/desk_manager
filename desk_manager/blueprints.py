@@ -14,5 +14,8 @@ def registrar_blueprints(app):
     from .routes.reserva import RESERVA
     app.register_blueprint(RESERVA)
 
+    from .routes.registros import REGISTROS
+    app.register_blueprint(REGISTROS)
+
     from .error_handler import error_bp
     app.register_blueprint(error_bp)
