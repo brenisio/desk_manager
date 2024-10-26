@@ -1,37 +1,52 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link href="{{ url_for('static', filename='styles/home.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
 <div class="wrapper-doc">
     <main>
         <div class="container">
-            <div class="section-container text-container">
-                <div>
-                    <h1 class="home-title">
-                        Bem-vindo ao Desk Manager!
-                    </h1>
-                    <p class="home-subtitles">
-                        O Desk Manager é uma plataforma para gerenciar aluguel de mesas para coworking.
-                    </p>
+            <!-- Título e Subtítulo -->
+            <div class="section-container text-center my-4">
+                <h1 class="home-title display-4">Bem-vindo ao Desk Manager!</h1>
+                <p class="home-subtitles lead">O Desk Manager é uma plataforma para gerenciar aluguel de mesas para coworking.</p>
+            </div>
+
+            <!-- Imagem e Botões -->
+            <div class="row align-items-center">
+                <!-- Imagem ajustada -->
+                <div class="col-md-8 d-flex justify-content-center">
+                    <img src="{{ url_for('static', filename='images/home_image.png') }}"
+                         class="img-fluid rounded"
+                         alt="Imagem de escritório"
+                         style="max-width: 60%; height: auto;">
+                </div>
+
+                <!-- Botões ajustados -->
+                <div class="col-md-4 d-flex flex-column align-items-center">
+                    <a href="{{ url_for('registros.listagem') }}" class="w-110 mb-4">
+                        <button type="button" class="btn btn-secondary btn-lg btn-block btn-fat">REGISTROS DE CHEGADA E SAIDA</button>
+                    </a>
+                    <a href="{{ url_for('plano.vincular_plano') }}" class="w-100 mb-4">
+                        <button type="button" class="btn btn-secondary btn-lg btn-block btn-fat">VINCULAÇÕES</button>
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-lg btn-block btn-fat mb-4">RELATÓRIOS</button>
                 </div>
             </div>
-                <div class="container-fluid d-flex align-items-center">
-                    <div class="flex-grow-1 d-flex align-items-center justify-content-start">
-                        <img src="{{ url_for('static', filename='images/home_image.png') }}" class="img-fluid" alt="Image" style="max-width: 100%; height: auto;">
-                    </div>
-                    <div class="d-flex flex-column justify-content-center align-items-center align-text-center" style="gap: 150px; padding: 10px;">
-                        <a href="{{ url_for('registros.listagem') }}">
-                        <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center text-wrap"
-                                style="padding: 15px 30px; font-size: 1.2rem; height: 100px; width: 250px; white-space: normal;">REGISTROS DE CHEGADA E SAIDA</button>
-                        </a>
-                        <button type="button" class="btn btn-primary" style="padding: 15px 30px; font-size: 1.2rem; height: 100px; width: 250px;">VINCULAÇÕES</button>
-                        <button type="button" class="btn btn-primary" style="padding: 15px 30px; font-size: 1.2rem; height: 100px; width: 250px;">RELATÓRIOS</button>
-                    </div>
-                </div>
         </div>
     </main>
 </div>
+
+<style>
+    .navbar {
+        padding-top: 0.2rem !important;
+        padding-bottom: 0.2rem !important;
+    }
+    .btn-fat {
+        padding: 50x 100px;
+        height: 65px;
+        font-size: 1.3rem;
+    }
+</style>
 {% endblock %}

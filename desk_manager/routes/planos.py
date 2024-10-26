@@ -1,6 +1,6 @@
 from urllib.parse import uses_relative
 
-from desk_manager.models import PlanoDeUso
+from desk_manager.models import PlanoDeUso, Cliente
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from desk_manager.extensions import db
 from desk_manager.forms.cadastro import FormCadastroPlano
@@ -90,3 +90,23 @@ def cadastrar_plano():
         flash('Plano cadastrado com sucesso!', 'alert alert-success')
         return redirect(url_for('home.home'))
     return render_template('cadastro_plano.html', form_cadastro_plano=form_cadastro_plano)
+
+@PLANO.route('/vincular_plano', methods=['GET', 'POST'])
+def vincular_plano():
+    planos = PlanoDeUso.query.all()
+    planos_dict = [plano.to_dict() for plano in planos]
+    clientes = Cliente.query.all()
+    clientes_dict = [cliente.to_dict() for cliente in clientes]
+    if request.method == 'POST':
+        cliente_id = request.form['cliente_id']
+        plano_id = request.form['plano_id']
+        cliente = Cliente.query.get(cliente_id)
+        plano = PlanoDeUso.query.get(plano_id)
+        if cliente.plano and cliente.plano.nome_do_plano == plano.nome_do_plano:
+            flash(f'O cliente {cliente.nome} já está vinculado ao plano {plano.nome_do_plano}', 'alert alert-warning')
+            return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)
+        cliente.plano = plano
+        db.session.commit()
+        flash(f'O plano {plano.nome_do_plano} foi vinculado ao cliente {cliente.nome}', 'alert alert-success')
+        return redirect(url_for('home.home'))
+    return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)
