@@ -35,6 +35,11 @@ def editar_reserva(reserva_id):
             flash('Mesa não encontrada.', 'warning')
             return redirect(url_for('reserva.cadastrar_reserva'))
 
+        # Verifica se o cliente tem saldo para reservar
+        if cliente.saldo < 1:
+            flash('Cliente não tem saldo suficiente', 'warning')
+            return redirect(url_for('reserva.cadastrar_reserva'))
+
         data_reserva = form_editar_reserva.data.data
         data_formatada = data_reserva.strftime("%d%m%Y")
 
@@ -45,20 +50,31 @@ def editar_reserva(reserva_id):
         if data_reserva < datetime.now():
             flash('Data inválida.', 'warning')
             return redirect(url_for('reserva.cadastrar_reserva'))
+        
         for reserva_bd in Reserva.query.all():
-            if (data_reserva == reserva_bd.data and
-                periodo_reserva_value == reserva_bd.periodo and
-                mesa == reserva_bd.mesa and
-                reserva_bd.estado != 2):
-                flash('Já existe uma reseva neste período.', 'warning')
-                return redirect(url_for('reserva.cadastrar_reserva'))
+
+            if not reserva == reserva_bd:
+
+                if (cliente == reserva_bd.cliente and
+                    data_reserva == reserva_bd.data and
+                    periodo_reserva_value == reserva_bd.periodo and
+                    reserva_bd.estado != 2):
+                    flash('O cliente já tem outra reserva nesse período.', 'warning')
+                    return redirect(url_for('reserva.cadastrar_reserva'))
+
+                if (data_reserva == reserva_bd.data and
+                    periodo_reserva_value == reserva_bd.periodo and
+                    mesa == reserva_bd.mesa and
+                    reserva_bd.estado != 2):
+                    flash('A mesa já está resevada neste período.', 'warning')
+                    return redirect(url_for('reserva.cadastrar_reserva'))
 
         codigo_reserva = str(data_formatada) + str(periodo_reserva) + str(numero_mesa)
         reserva.codigo = codigo_reserva
         reserva.data = data_reserva
         reserva.periodo = PeriodoReserva(periodo_reserva)
-        cliente = cliente
-        mesa = mesa
+        reserva.cliente = cliente
+        reserva.mesa = mesa
 
         db.session.commit()
 
