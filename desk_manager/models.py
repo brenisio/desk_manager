@@ -90,6 +90,9 @@ class Reserva(db.Model):
     data: so.Mapped[datetime] = so.mapped_column(sa.DateTime, nullable=False)
     periodo: so.Mapped[PeriodoReserva] = so.mapped_column(sa.Integer, nullable=False)
     estado: so.Mapped[EstadoReserva] = so.mapped_column(sa.Integer, nullable=False, default=EstadoReserva.RESERVADA)
+    data_chegada: so.Mapped[datetime] = so.mapped_column(sa.DateTime, nullable=True)
+    data_saida: so.Mapped[datetime] = so.mapped_column(sa.DateTime, nullable=True)
+    data_cancelamento: so.Mapped[datetime] = so.mapped_column(sa.DateTime, nullable=True)
 
     cliente: so.Mapped[Cliente] = so.relationship(Cliente, back_populates="reservas")
     cliente_id: so.Mapped[str] = so.mapped_column(sa.String, sa.ForeignKey("cliente.id"), nullable=False)

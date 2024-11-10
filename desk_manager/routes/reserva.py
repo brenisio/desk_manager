@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from desk_manager.extensions import db
 from desk_manager.forms.cadastro import FormCadastroReserva
 import uuid
-from datetime import datetime, date
+from datetime import datetime, date, time
 
 RESERVA = Blueprint('reserva', __name__)
 
@@ -127,15 +127,29 @@ def cadastrar_reserva():
             return redirect(url_for('reserva.cadastrar_reserva'))
 
         data_reserva = form_cadastro_reserva.data.data
-        data_formatada = data_reserva.strftime("%d%m%Y")
+        data_formatada = data_reserva.strftime("%d/%m/%Y")
 
         periodo_reserva_value = int(form_cadastro_reserva.periodo.data)
         periodo_reserva = PeriodoReserva(periodo_reserva_value)
 
         # Verifica se data e periodo da reserva são válidos
-        if data_reserva < datetime.now():
+        hoje = datetime.now().date()
+        hora_atual = datetime.now().time()
+
+        if data_reserva < hoje:
             flash('Data inválida.', 'warning')
             return redirect(url_for('reserva.cadastrar_reserva'))
+
+        if data_reserva == hoje:
+            if periodo_reserva == PeriodoReserva.MANHA and hora_atual >= time(11, 59):
+                flash('O período da manhã já passou para hoje.', 'warning')
+                return redirect(url_for('reserva.cadastrar_reserva'))
+            elif periodo_reserva == PeriodoReserva.TARDE and hora_atual >= time(16, 59):
+                flash('O período da tarde já passou para hoje.', 'warning')
+                return redirect(url_for('reserva.cadastrar_reserva'))
+            elif periodo_reserva == PeriodoReserva.NOITE and hora_atual >= time(21, 0):
+                flash('O período da noite já passou para hoje.', 'warning')
+                return redirect(url_for('reserva.cadastrar_reserva'))
         
         for reserva_bd in Reserva.query.all():
 
@@ -167,9 +181,7 @@ def cadastrar_reserva():
 
         db.session.add(reserva)
         db.session.commit()
-        flash('Reserva cadastrada com sucesso!', 'alert-success')
+        flash('Reserva cadastrada com sucesso!', 'success')
         return redirect(url_for('home.home'))
     return render_template('cadastro_reserva.html', form_cadastro_reserva=form_cadastro_reserva)
-
-
 

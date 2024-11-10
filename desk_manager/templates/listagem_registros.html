@@ -2,14 +2,14 @@
 
 {% block body %}
 <div class="container my-5">
-     <h1 class="display-5 text-center my-0 mb-3"><strong>Registros de Chegada e Saída</strong></h1>
+    <h1 class="display-5 text-center my-0 mb-3"><strong>Registros de Chegada e Saída</strong></h1>
     <div class="d-flex justify-content-center align-items-center mb-5">
         <form id="buscarReservaForm" action="" method="GET" class="form-inline justify-content-center" onsubmit="buscarReserva(event)">
             <input type="text" id="codigoInput" class="form-control mr-2" placeholder="Buscar por código" required>
             <button type="submit" class="btn btn-primary">Buscar</button>
         </form>
     </div>
-</div>
+
     <div class="row">
         {% if reserva_escolhida %}
             <div class="col-md-6 offset-md-3">
@@ -17,45 +17,47 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h2 class="card-title"><strong>Dados da Reserva</strong></h2>
-                        <p class="card-text"><strong>Código:</strong> {{ reserva_escolhida["codigo"] }}</p>
-                        <p class="card-text"><strong>Data:</strong> {{ reserva_escolhida["data"] }}</p>
-                        <p class="card-text"><strong>Período:</strong> {{ reserva_escolhida["periodo"] }}</p>
-                        <p class="card-text"><strong>Estado:</strong> {{ reserva_escolhida["estado"] }}</p>
-                        <p class="card-text"><strong>Cliente:</strong> {{ reserva_escolhida["cliente"].nome }}</p>
-                        <p class="card-text"><strong>Mesa:</strong> {{ reserva_escolhida["mesa"].numero }}</p>
-                        <form action="{{ url_for('registros.registrar_chegada', reserva_id=reserva.id) }}" method="POST" style="display:columm;">
-                            <button type="submit" class="btn btn-primary">Registrar chegada</button>
-                        </form>
-                        <form action="{{ url_for('registros.registrar_saida', reserva_id=reserva.id) }}" method="POST" style="display:columm;">
-                            <button type="submit" class="btn btn-warning">Registrar saida</button>
-                        </form>
-                        <form action="{{ url_for('registros.registrar_cancelamento', reserva_id=reserva.id) }}" method="POST" style="display:columm;">
-                            <button type="submit" class="btn btn-danger">Registrar cancelamento</button>
-                        </form>
+                        <p class="card-text"><strong>Código:</strong> {{ reserva_escolhida.codigo }}</p>
+                        <p class="card-text"><strong>Data:</strong> {{ reserva_escolhida.data }}</p>
+                        <p class="card-text"><strong>Período:</strong> {{ reserva_escolhida.periodo }}</p>
+                        <p class="card-text"><strong>Estado:</strong> {{ reserva_escolhida.estado }}</p>
+                        <p class="card-text"><strong>Cliente:</strong> {{ reserva_escolhida.cliente.nome }}</p>
+                        <p class="card-text"><strong>Mesa:</strong> {{ reserva_escolhida.mesa.numero }}</p>
+                        <div class="form-group text-center">
+                            <form action="{{ url_for('registros.registrar_chegada', reserva_id=reserva_escolhida.id) }}" method="POST" style="display:columm; padding: 5px;">
+                                <button type="submit" class="btn btn-primary" style="font-size: 1.2rem; width: 230px;">Registrar chegada</button>
+                            </form>
+                            <form action="{{ url_for('registros.registrar_saida', reserva_id=reserva_escolhida.id) }}" method="POST" style="display:columm; padding: 5px;">
+                                <button type="submit" class="btn btn-warning" style="font-size: 1.2rem; width: 230px;">Registrar saída</button>
+                            </form>
+                            <form action="{{ url_for('registros.registrar_cancelamento', reserva_id=reserva_escolhida.id) }}" method="POST" style="display:columm; padding: 5px;">
+                                <button type="submit" class="btn btn-danger" style="font-size: 1.2rem; width: 230px;">Registrar cancelamento</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-        {% elif reservas %}
+        {% elif reservas and reservas|length > 0 %}
             {% for reserva in reservas %}
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h2 class="card-title"><strong>Dados da Reserva</strong></h2>
-                        <p class="card-text"><strong>Código:</strong> {{ reserva["codigo"] }}</p>
-                        <p class="card-text"><strong>Data:</strong> {{ reserva["data"] }}</p>
-                        <p class="card-text"><strong>Período:</strong> {{ reserva["periodo"] }}</p>
-                        <p class="card-text"><strong>Estado:</strong> {{ reserva["estado"] }}</p>
-                        <p class="card-text"><strong>Cliente:</strong> {{ reserva["cliente"].nome }}</p>
-                        <p class="card-text"><strong>Mesa:</strong> {{ reserva["mesa"].numero }}</p>
+                        <p class="card-text"><strong>Código:</strong> {{ reserva.codigo }}</p>
+                        <p class="card-text"><strong>Data:</strong> {{ reserva.data }}</p>
+                        <p class="card-text"><strong>Período:</strong> {{ reserva.periodo }}</p>
+                        <p class="card-text"><strong>Estado:</strong> {{ reserva.estado }}</p>
+                        <p class="card-text"><strong>Cliente:</strong> {{ reserva.cliente.nome }}</p>
+                        <p class="card-text"><strong>Mesa:</strong> {{ reserva.mesa.numero }}</p>
                         <div class="form-group text-center">
                             <form action="{{ url_for('registros.registrar_chegada', reserva_id=reserva.id) }}" method="POST" style="display:columm; padding: 5px;">
-                                <button type="submit" class="btn btn-primary" style="font-size: 1.2rem;  width: 230px;">Registrar chegada</button>
+                                <button type="submit" class="btn btn-primary" style="font-size: 1.2rem; width: 230px;">Registrar chegada</button>
                             </form>
                             <form action="{{ url_for('registros.registrar_saida', reserva_id=reserva.id) }}" method="POST" style="display:columm; padding: 5px;">
-                                <button type="submit" class="btn btn-warning" style="font-size: 1.2rem;  width: 230px;">Registrar saída</button>
+                                <button type="submit" class="btn btn-warning" style="font-size: 1.2rem; width: 230px;">Registrar saída</button>
                             </form>
                             <form action="{{ url_for('registros.registrar_cancelamento', reserva_id=reserva.id) }}" method="POST" style="display:columm; padding: 5px;">
-                                <button type="submit" class="btn btn-danger" style="font-size: 1.2rem;  width: 230px;">Registrar cancelamento</button>
+                                <button type="submit" class="btn btn-danger" style="font-size: 1.2rem; width: 230px;">Registrar cancelamento</button>
                             </form>
                         </div>
                     </div>
@@ -64,12 +66,13 @@
             {% endfor %}
         {% else %}
             <div class="col-12">
-                <p class="text-center">Não há reservas cadastradas.</p>
+                <p class="text-center">Não há reservas para hoje.</p>
             </div>
         {% endif %}
     </div>
 </div>
 {% endblock %}
+
 
 {% block scripts %}
 <script>

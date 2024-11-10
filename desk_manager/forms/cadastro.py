@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, SubmitField, DateTimeField, SelectField, HiddenField
+from wtforms import StringField, SubmitField, DateTimeField, SelectField, HiddenField, DateField
 from wtforms.fields.numeric import IntegerField
 from wtforms.validators import DataRequired, length, ValidationError
 from datetime import datetime
@@ -56,17 +56,19 @@ class FormCadastroPlano(FlaskForm):
     botao_submit = SubmitField('Cadastrar Plano')
 
 class FormCadastroReserva(FlaskForm):
-    data = StringField('', validators=[DataRequired()])
-    def validate_data(self, field):
-        try:
-            # Tenta converter a string para um objeto datetime
-            self.data.data = datetime.strptime(field.data, '%d/%m/%Y')
-        except ValueError:
-            raise ValidationError('Data inválida! Use o formato dd/mm/yyyy.')
-        
+    data = DateField('', format='%Y-%m-%d', validators=[DataRequired(message='Data Inválida!')])
+
+
     periodo = SelectField('', choices=[(periodo.value, periodo.name) for periodo in PeriodoReserva],
                            validators=[DataRequired()])
     cpf_cliente = StringField('', validators=[DataRequired()])
     numero_mesa = StringField('', validators=[DataRequired()])
 
     botao_submit = SubmitField('Cadastrar Reserva')
+
+"""    def validate_data(self, field):
+        try:
+            # Tenta converter a string para um objeto datetime
+            self.data.data = datetime.strptime(field.data, '%d/%m/%Y')
+        except ValueError:
+            raise ValidationError('Data inválida! Use o formato dd/mm/yyyy.')"""
