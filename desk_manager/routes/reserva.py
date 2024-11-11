@@ -46,10 +46,25 @@ def editar_reserva(reserva_id):
         periodo_reserva_value = int(form_editar_reserva.periodo.data)
         periodo_reserva = PeriodoReserva(periodo_reserva_value)
 
+
         # Verifica se data e periodo da reserva são válidos
-        if data_reserva < datetime.now():
+        hoje = datetime.now().date()
+        hora_atual = datetime.now().time()
+
+        if data_reserva < hoje:
             flash('Data inválida.', 'warning')
             return redirect(url_for('reserva.cadastrar_reserva'))
+
+        if data_reserva == hoje:
+            if periodo_reserva == PeriodoReserva.MANHA and hora_atual >= time(11, 59):
+                flash('Data inválida.', 'warning')
+                return redirect(url_for('reserva.cadastrar_reserva'))
+            elif periodo_reserva == PeriodoReserva.TARDE and hora_atual >= time(16, 59):
+                flash('Data inválida.', 'warning')
+                return redirect(url_for('reserva.cadastrar_reserva'))
+            elif periodo_reserva == PeriodoReserva.NOITE and hora_atual >= time(21, 0):
+                flash('Data inválida.', 'warning')
+                return redirect(url_for('reserva.cadastrar_reserva'))
         
         for reserva_bd in Reserva.query.all():
 
@@ -142,13 +157,13 @@ def cadastrar_reserva():
 
         if data_reserva == hoje:
             if periodo_reserva == PeriodoReserva.MANHA and hora_atual >= time(11, 59):
-                flash('O período da manhã já passou para hoje.', 'warning')
+                flash('Data inválida.', 'warning')
                 return redirect(url_for('reserva.cadastrar_reserva'))
             elif periodo_reserva == PeriodoReserva.TARDE and hora_atual >= time(16, 59):
-                flash('O período da tarde já passou para hoje.', 'warning')
+                flash('Data inválida.', 'warning')
                 return redirect(url_for('reserva.cadastrar_reserva'))
             elif periodo_reserva == PeriodoReserva.NOITE and hora_atual >= time(21, 0):
-                flash('O período da noite já passou para hoje.', 'warning')
+                flash('Data inválida.', 'warning')
                 return redirect(url_for('reserva.cadastrar_reserva'))
         
         for reserva_bd in Reserva.query.all():
