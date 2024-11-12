@@ -14,7 +14,7 @@ def lista_planos():
     planos = PlanoDeUso.query.all()
     planos_dict = [plano.to_dict() for plano in planos]
     # mostra todos os clientes do plano
-    plano = PlanoDeUso.query.get('8c2bbf09')
+    # plano = PlanoDeUso.query.get('8c2bbf09')
     #for cliente in plano.clientes:
         #print(cliente.nome)
     return render_template('lista_planos.html', planos=planos_dict, plano_escolhido=None)
@@ -33,7 +33,7 @@ def editar_plano(plano_id):
                 flash('Já existe um plano com este nome!', 'warning')
                 return redirect(url_for('plano.lista_planos'))
 
-        if  plano.nome_do_plano == form.nome_do_plano.data and plano.quantidade_de_usos == form.quantidade_de_usos.data:
+        if plano.nome_do_plano == form.nome_do_plano.data and plano.quantidade_de_usos == form.quantidade_de_usos.data:
             flash(f'Nenhuma informação do plano {form.nome_do_plano.data} foi alterada!', 'warning')
             return redirect(url_for('plano.lista_planos'))
 
@@ -106,6 +106,9 @@ def vincular_plano():
             flash(f'O cliente {cliente.nome} já está vinculado ao plano {plano.nome_do_plano}', 'alert alert-warning')
             return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)
         cliente.plano = plano
+        print('Saldo:', cliente.saldo)
+        cliente.saldo += plano.quantidade_de_usos
+        print('Saldo agora:', cliente.saldo)
         db.session.commit()
         flash(f'O plano {plano.nome_do_plano} foi vinculado ao cliente {cliente.nome}', 'alert alert-success')
         return redirect(url_for('home.home'))

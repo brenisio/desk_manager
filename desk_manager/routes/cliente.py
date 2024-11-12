@@ -35,9 +35,15 @@ def cadastrar_cliente():
         return redirect(url_for('home.home'))
     return render_template('cadastro_cliente.html', form_cadastro_cliente=form_cadastro_cliente)
 
-@CLIENTE.route('/clientes')
 
+@CLIENTE.route('/clientes')
 def lista_clientes():
+    agora = datetime.utcnow()
+    if agora.day == 1:
+        clientes = Cliente.query.all()
+        for cliente in clientes:
+            cliente.saldo = 1
+        db.session.commit()
     clientes = Cliente.query.all()
     clientes_dict = [cliente.to_dict() for cliente in clientes]
     cliente = Cliente.query.get('1ffe3bb2')
