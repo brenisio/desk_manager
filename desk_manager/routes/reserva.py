@@ -142,7 +142,7 @@ def cadastrar_reserva():
             return redirect(url_for('reserva.cadastrar_reserva'))
 
         data_reserva = form_cadastro_reserva.data.data
-        data_formatada = data_reserva.strftime("%d/%m/%Y")
+        data_formatada = data_reserva.strftime("%d%m%Y")
 
         periodo_reserva_value = int(form_cadastro_reserva.periodo.data)
         periodo_reserva = PeriodoReserva(periodo_reserva_value)
@@ -162,20 +162,21 @@ def cadastrar_reserva():
             elif periodo_reserva == PeriodoReserva.TARDE and hora_atual >= time(16, 59):
                 flash('Data inválida.', 'warning')
                 return redirect(url_for('reserva.cadastrar_reserva'))
-            elif periodo_reserva == PeriodoReserva.NOITE and hora_atual >= time(21, 0):
+            elif periodo_reserva == PeriodoReserva.NOITE and hora_atual >= time(21, 59):
                 flash('Data inválida.', 'warning')
                 return redirect(url_for('reserva.cadastrar_reserva'))
-        
+
+
         for reserva_bd in Reserva.query.all():
 
             if (cliente == reserva_bd.cliente and
-                data_reserva == reserva_bd.data and
+                data_reserva == reserva_bd.data.date() and
                 periodo_reserva_value == reserva_bd.periodo and
                 reserva_bd.estado != 2):
                 flash('O cliente já tem outra reserva nesse período.', 'warning')
                 return redirect(url_for('reserva.cadastrar_reserva'))
 
-            if (data_reserva == reserva_bd.data and
+            if (data_reserva == reserva_bd.data.date() and
                 periodo_reserva_value == reserva_bd.periodo and
                 mesa == reserva_bd.mesa and
                 reserva_bd.estado != 2):
