@@ -1,6 +1,3 @@
-#from crypt import methods
-from crypt import methods
-
 from desk_manager.models import PlanoDeUso, EstadoReserva
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from desk_manager.extensions import db
