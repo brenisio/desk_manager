@@ -198,6 +198,6 @@ def cadastrar_reserva():
         db.session.add(reserva)
         db.session.commit()
         flash('Reserva cadastrada com sucesso!', 'success')
-        return redirect(url_for('home.home'))
+        return redirect(url_for('reserva.lista_reservas'))
     return render_template('cadastro_reserva.html', form_cadastro_reserva=form_cadastro_reserva)
 
