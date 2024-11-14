@@ -104,7 +104,7 @@ def vincular_plano():
         plano = PlanoDeUso.query.get(plano_id)
         if cliente.plano and cliente.plano.nome_do_plano == plano.nome_do_plano:
             flash(f'O cliente {cliente.nome} já está vinculado ao plano {plano.nome_do_plano}', 'alert alert-warning')
-            return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)
+            return redirect(url_for('plano.vincular_plano', planos=planos_dict, clientes=clientes_dict))
         cliente.plano = plano
         print('Saldo:', cliente.saldo)
         cliente.saldo += plano.quantidade_de_usos
@@ -112,4 +112,4 @@ def vincular_plano():
         db.session.commit()
         flash(f'O plano {plano.nome_do_plano} foi vinculado ao cliente {cliente.nome}', 'alert alert-success')
         return redirect(url_for('home.home'))
-    return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)
+    return redirect(url_for('plano.vincular_plano', planos=planos_dict, clientes=clientes_dict))
