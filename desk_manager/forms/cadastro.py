@@ -28,9 +28,15 @@ def validate_telefone(form, field):
     if len(telefone) > 11:
         raise ValidationError('O telefone deve ter no máximo 11 dígitos.')
 
+def validate_nome(form, field):
+    if not field.data.replace(" ", "").isalpha():
+        raise ValidationError("O nome deve conter apenas caracteres alfabéticos.")
+
 class FormCadastroCliente(FlaskForm):
     id = HiddenField('ID')
-    nome = StringField('', validators=[DataRequired()])
+    nome = StringField('', validators=[
+        DataRequired(),
+        validate_nome])
     cpf = StringField('CPF', validators=[
         DataRequired(),
         length(min=11, max=11, message="O CPF deve ter exatamente 11 dígitos."),
