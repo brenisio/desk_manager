@@ -195,6 +195,8 @@ def cadastrar_reserva():
             mesa = mesa
         )
 
+        cliente.saldo -= 1
+
         db.session.add(reserva)
         db.session.commit()
         flash('Reserva cadastrada com sucesso!', 'success')

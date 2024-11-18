@@ -2,7 +2,7 @@ import uuid
 import os
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from datetime import datetime
-from desk_manager.models import Cliente
+from desk_manager.models import Cliente, Reserva
 from desk_manager.forms.cadastro import FormCadastroCliente
 from desk_manager.extensions import db
 
@@ -87,6 +87,12 @@ def excluir_cliente(cliente_id):
     #ADD AQUI A CONDIÇÃO DE VERIFICAR SE O CLIENTE TEVE OU TEM UMA RESERVA
 
     cliente = Cliente.query.get(cliente_id)
+
+    for reserva in Reserva.query.all():
+        if (reserva.cliente == cliente) and (reserva.estado == 1 or reserva.estado == 3):
+            flash("Não possível excluir clientes que tenham uma reserva a ser usada!", 'warning')
+            return redirect(url_for('cliente.lista_clientes'))
+
     db.session.delete(cliente)
     db.session.commit()
     return redirect(url_for('cliente.lista_clientes'))

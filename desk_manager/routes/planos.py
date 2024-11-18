@@ -80,6 +80,12 @@ def cadastrar_plano():
     if form_cadastro_plano.validate_on_submit():
         id = uuid.uuid4().hex[:8]
 
+        nome_do_plano = form_cadastro_plano.nome_do_plano.data
+        plano = PlanoDeUso.query.filter_by(nome_do_plano=nome_do_plano).first()
+        if plano:
+            flash('Plano com o mesmo nome informado existente, atenção!', 'warning')
+            return redirect(url_for('plano.lista_planos'))
+
         plano = PlanoDeUso(
             id=id,
             nome_do_plano=form_cadastro_plano.nome_do_plano.data,
@@ -104,12 +110,12 @@ def vincular_plano():
         plano = PlanoDeUso.query.get(plano_id)
         if cliente.plano and cliente.plano.nome_do_plano == plano.nome_do_plano:
             flash(f'O cliente {cliente.nome} já está vinculado ao plano {plano.nome_do_plano}', 'alert alert-warning')
-            return redirect(url_for('plano.vincular_plano', planos=planos_dict, clientes=clientes_dict))
+            return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)
         cliente.plano = plano
-        print('Saldo:', cliente.saldo)
+        #print('Saldo:', cliente.saldo)
         cliente.saldo += plano.quantidade_de_usos
-        print('Saldo agora:', cliente.saldo)
+        #print('Saldo agora:', cliente.saldo)
         db.session.commit()
         flash(f'O plano {plano.nome_do_plano} foi vinculado ao cliente {cliente.nome}', 'alert alert-success')
         return redirect(url_for('home.home'))
-    return redirect(url_for('plano.vincular_plano', planos=planos_dict, clientes=clientes_dict))
+    return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)

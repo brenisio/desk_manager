@@ -51,6 +51,12 @@ def cadastrar_mesa():
     if form_cadastro_mesa.validate_on_submit():
         id = uuid.uuid4().hex[:8]
 
+        numero = form_cadastro_mesa.numero.data
+        mesa = Mesa.query.filter_by(numero=numero).first()
+        if mesa:
+            flash('Já existe uma mesa cadastrada com esse numero!', 'warning')
+            return redirect(url_for('mesa.lista_mesas'))
+
         mesa = Mesa(
             id = id,
             numero = form_cadastro_mesa.numero.data,
