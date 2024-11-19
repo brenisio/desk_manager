@@ -90,7 +90,7 @@ def excluir_cliente(cliente_id):
 
     for reserva in Reserva.query.all():
         if (reserva.cliente == cliente) and (reserva.estado == 1 or reserva.estado == 3):
-            flash("Não possível excluir clientes que tenham uma reserva a ser usada!", 'warning')
+            flash("Não possível excluir clientes que tenham uma reserva", 'warning')
             return redirect(url_for('cliente.lista_clientes'))
 
     db.session.delete(cliente)
