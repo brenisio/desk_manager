@@ -17,7 +17,7 @@ def cadastrar_cliente():
 
         # verificar cpf
         cpf = form_cadastro_cliente.cpf.data
-        cliente = Cliente.query.filter_by(cpf=cpf).first()
+        cliente = Cliente.buscar_cliente_por_cpf(cpf)
         if cliente:
             flash('CPF já cadastrado!', 'alert alert-danger')
             return redirect(url_for('cliente.cadastrar_cliente'))
@@ -40,11 +40,11 @@ def cadastrar_cliente():
 def lista_clientes():
     agora = datetime.utcnow()
     if agora.day == 1:
-        clientes = Cliente.query.all()
+        clientes = Cliente.buscar_todos_clientes()
         for cliente in clientes:
             cliente.saldo = 1
         db.session.commit()
-    clientes = Cliente.query.all()
+    clientes = Cliente.buscar_todos_clientes()
     clientes_dict = [cliente.to_dict() for cliente in clientes]
     cliente = Cliente.query.get('1ffe3bb2')
     #print(cliente.plano.nome_do_plano)
@@ -54,7 +54,7 @@ def lista_clientes():
 @CLIENTE.route('/cliente/<string:cliente_id>/editar', methods=['GET', 'POST'])
 def editar_cliente(cliente_id):
     # Busca o cliente do banco de dados pelo ID
-    cliente = Cliente.query.get_or_404(cliente_id)
+    cliente = Cliente.buscar_cliente_por_id(cliente_id)
 
     # Inicializa o formulário com os dados atuais do cliente
     form = FormCadastroCliente(obj=cliente)
@@ -88,7 +88,7 @@ def excluir_cliente(cliente_id):
 
     cliente = Cliente.query.get(cliente_id)
 
-    for reserva in Reserva.query.all():
+    for reserva in Reserva.buscar_todas_reservas():
         if (reserva.cliente == cliente) and (reserva.estado == 1 or reserva.estado == 3):
             flash("Não possível excluir clientes que tenham uma reserva", 'warning')
             return redirect(url_for('cliente.lista_clientes'))
@@ -99,7 +99,7 @@ def excluir_cliente(cliente_id):
 
 @CLIENTE.route('/buscar_cliente/<string:cpf>', methods=['GET'])
 def buscar_cliente_por_cpf(cpf):
-    cliente = Cliente.query.filter_by(cpf=cpf).first()
+    cliente = Cliente.buscar_cliente_por_cpf(cpf)
     if not cliente:
         return render_template('lista_clientes.html', cliente_escolhido=None)
     cliente_escolhido = cliente.to_dict()

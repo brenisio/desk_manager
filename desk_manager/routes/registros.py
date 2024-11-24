@@ -2,7 +2,7 @@ from desk_manager.models import PlanoDeUso, EstadoReserva
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from desk_manager.extensions import db
 from desk_manager.routes.reserva import Reserva, RESERVA, buscar_reserva_por_codigo
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from sqlalchemy import func
 import uuid
 
@@ -10,16 +10,14 @@ REGISTROS = Blueprint('registros', __name__)
 
 @REGISTROS.route('/registros')
 def listagem():
-    hoje = datetime.now().date()
-    reservas = Reserva.query.filter(func.date(Reserva.data) == hoje).all()
+    reservas = buscar_reservas_hoje()
     reservas_dict = [reserva.to_dict() for reserva in reservas]
-    #flash(f"Listando reservas para o dia {hoje.strftime("%d/%m/%Y")}", "success")
     return render_template('listagem_registros.html', reservas=reservas_dict)
 
 
 @REGISTROS.route('/reservas/<string:reserva_id>/registrar_chegada', methods=['POST'])
 def registrar_chegada(reserva_id):
-    reserva = Reserva.query.get_or_404(reserva_id)
+    reserva = Reserva.buscar_reserva_por_id(reserva_id)
     hoje = datetime.now().date()
 
     if reserva.data == hoje:
@@ -38,7 +36,7 @@ def registrar_chegada(reserva_id):
 
 @REGISTROS.route('/reservas/<string:reserva_id>/registrar_saida', methods=['POST'])
 def registrar_saida(reserva_id):
-    reserva = Reserva.query.get_or_404(reserva_id)
+    reserva = Reserva.buscar_reserva_por_id(reserva_id)
     hoje = datetime.now().date()
 
     if reserva.data == hoje:
@@ -58,7 +56,7 @@ def registrar_saida(reserva_id):
 
 @REGISTROS.route('/reservas/<string:reserva_id>/registrar_cancelamento', methods=['POST'])
 def registrar_cancelamento(reserva_id):
-    reserva = Reserva.query.get_or_404(reserva_id)
+    reserva = Reserva.buscar_reserva_por_id(reserva_id)
     hoje = datetime.now()
 
     if reserva.estado == EstadoReserva.RESERVADA:
@@ -75,7 +73,12 @@ def registrar_cancelamento(reserva_id):
 
 @REGISTROS.route('/buscar_listagem/<string:codigo>', methods=['GET'])
 def buscar_listagem_por_codigo(codigo):
-    reserva = Reserva.query.filter_by(codigo=codigo).first()
+    reserva = Reserva.buscar_reserva_por_codigo(codigo)
     if not reserva:
         return render_template('listagem_registros.html', reserva_escolhida=None)
     return render_template('listagem_registros.html', reserva_escolhida=reserva.to_dict())
+
+def buscar_reservas_hoje():
+    hoje = datetime.now().date()
+
+    return Reserva.query.filter(func.date(Reserva.data) == hoje).all()
