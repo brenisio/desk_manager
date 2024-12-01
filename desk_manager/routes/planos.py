@@ -101,21 +101,26 @@ def cadastrar_plano():
 def vincular_plano():
     planos = PlanoDeUso.buscar_todos_planos()
     planos_dict = [plano.to_dict() for plano in planos]
-    clientes = Cliente.query.all()
+    clientes = Cliente.buscar_todos_clientes()
     clientes_dict = [cliente.to_dict() for cliente in clientes]
-    if request.method == 'POST':
-        cliente_id = request.form['cliente_id']
+    if 'vincular_plano_btn' in request.form:
         plano_id = request.form['plano_id']
-        cliente = Cliente.query.get(cliente_id)
-        plano = PlanoDeUso.query.get(plano_id)
-        if cliente.plano and cliente.plano.nome_do_plano == plano.nome_do_plano:
-            flash(f'O cliente {cliente.nome} já está vinculado ao plano {plano.nome_do_plano}', 'alert alert-warning')
+        cliente_id = request.form['cliente_id']
+        retorno_verificacao = verificar_cliente_existente(cliente_id, plano_id)
+        if not retorno_verificacao:
             return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)
+        cliente, plano = retorno_verificacao
         cliente.plano = plano
-        #print('Saldo:', cliente.saldo)
         cliente.saldo += plano.quantidade_de_usos
-        #print('Saldo agora:', cliente.saldo)
         db.session.commit()
         flash(f'O plano {plano.nome_do_plano} foi vinculado ao cliente {cliente.nome}', 'alert alert-success')
         return redirect(url_for('home.home'))
     return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)
+
+def verificar_cliente_existente(cliente_id, plano_id):
+    cliente = Cliente.buscar_cliente_por_id(cliente_id)
+    plano = PlanoDeUso.buscar_plano_por_id(plano_id)
+    if cliente.plano and cliente.plano.nome_do_plano == plano.nome_do_plano:
+        flash(f'O cliente {cliente.nome} já está vinculado ao plano {plano.nome_do_plano}', 'alert alert-warning')
+        return None
+    return cliente, plano
