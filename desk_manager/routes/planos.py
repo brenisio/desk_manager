@@ -103,19 +103,19 @@ def vincular_plano():
     planos_dict = [plano.to_dict() for plano in planos]
     clientes = Cliente.buscar_todos_clientes()
     clientes_dict = [cliente.to_dict() for cliente in clientes]
-    if 'vincular_plano_btn' in request.form:
-        plano_id = request.form['plano_id']
+    if verificar_botao_apertado():
         cliente_id = request.form['cliente_id']
-        retorno_verificacao = verificar_cliente_existente(cliente_id, plano_id)
-        if not retorno_verificacao:
+        plano_id = request.form['plano_id']
+        if not verificar_cliente_existente(cliente_id, plano_id):
             return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)
-        cliente, plano = retorno_verificacao
+        cliente, plano = verificar_cliente_existente(cliente_id, plano_id)
         cliente.plano = plano
         cliente.saldo += plano.quantidade_de_usos
         db.session.commit()
         flash(f'O plano {plano.nome_do_plano} foi vinculado ao cliente {cliente.nome}', 'alert alert-success')
         return redirect(url_for('home.home'))
     return render_template('vincular_planos.html', planos=planos_dict, clientes=clientes_dict)
+
 
 def verificar_cliente_existente(cliente_id, plano_id):
     cliente = Cliente.buscar_cliente_por_id(cliente_id)
@@ -124,3 +124,8 @@ def verificar_cliente_existente(cliente_id, plano_id):
         flash(f'O cliente {cliente.nome} já está vinculado ao plano {plano.nome_do_plano}', 'alert alert-warning')
         return None
     return cliente, plano
+
+def verificar_botao_apertado():
+    if 'vincular_plano_btn' in request.form:
+        return True
+    return False
