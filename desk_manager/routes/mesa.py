@@ -8,25 +8,25 @@ MESA = Blueprint('mesa', __name__)
 
 @MESA.route('/mesas')
 def lista_mesas():
-    mesas = Mesa.query.all()
+    mesas = Mesa.buscar_todas_mesas()
     mesas_dict = [mesa.to_dict() for mesa in mesas]
     return render_template('lista_mesas.html', mesas=mesas_dict)
 
 @MESA.route('/mesa/<string:mesa_id>/editar', methods=['GET'])
 def editar_mesa(mesa_id):
-    mesa = Mesa.query.get(mesa_id)
+    mesa = Mesa.buscar_mesa_por_id(mesa_id)
     return render_template('editar_mesa.html', mesa=mesa)
 
 @MESA.route('/mesa/<string:mesa_id>/editar', methods=['POST'])
 def atualizar_mesa(mesa_id):
-    mesa = Mesa.query.get(mesa_id)
+    mesa = Mesa.buscar_mesa_por_id(mesa_id)
     mesa.numero = request.form['numero']
     db.session.commit()
     return redirect(url_for('mesa.lista_mesas'))
 
 @MESA.route('/mesa/<string:mesa_id>/excluir', methods=['POST'])
 def excluir_mesa(mesa_id):
-    mesa = Mesa.query.get(mesa_id)
+    mesa = Mesa.buscar_mesa_por_id(mesa_id)
 
     for reserva in Reserva.query.all():
         if (reserva.mesa == mesa) and (reserva.estado == 1 or reserva.estado == 3):
@@ -40,7 +40,7 @@ def excluir_mesa(mesa_id):
 
 @MESA.route('/buscar_mesa/<string:numero>', methods=['GET'])
 def buscar_mesa_por_numero(numero):
-    mesa = Mesa.query.filter_by(numero=numero).first()
+    mesa = Mesa.buscar_mesa_por_numero(numero)
     if not mesa:
         return render_template('lista_mesas.html', mesa_escolhida=None)
     return render_template('lista_mesas.html', mesa_escolhida=mesa.to_dict())

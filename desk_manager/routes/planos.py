@@ -11,7 +11,7 @@ PLANO = Blueprint('plano', __name__)
 
 @PLANO.route('/tipos_planos')
 def lista_planos():
-    planos = PlanoDeUso.query.all()
+    planos = PlanoDeUso.buscar_todos_planos()
     planos_dict = [plano.to_dict() for plano in planos]
     # mostra todos os clientes do plano
     # plano = PlanoDeUso.query.get('8c2bbf09')
@@ -22,7 +22,7 @@ def lista_planos():
 
 @PLANO.route('/plano/<string:plano_id>/editar', methods=['GET', 'POST'])
 def editar_plano(plano_id):
-    plano = PlanoDeUso.query.get_or_404(plano_id)
+    plano = PlanoDeUso.buscar_plano_por_id(plano_id)
     form = FormCadastroPlano(obj=plano)
 
     if form.validate_on_submit():
@@ -50,7 +50,7 @@ def editar_plano(plano_id):
 
 @PLANO.route('/plano/<string:plano_id>/editar', methods=['POST'])
 def atualizar_plano(plano_id):
-    plano = PlanoDeUso.query.get(plano_id)
+    plano = PlanoDeUso.buscar_plano_por_id(plano_id)
     plano.nome_do_plano = request.form['nome_do_plano']
     plano.quantidade_de_usos = request.form['quantidade_de_usos']
     db.session.commit()
@@ -59,7 +59,7 @@ def atualizar_plano(plano_id):
 
 @PLANO.route('/plano/<string:plano_id>/excluir', methods=['POST'])
 def excluir_plano(plano_id):
-    plano = PlanoDeUso.query.get(plano_id)
+    plano = PlanoDeUso.buscar_plano_por_id(plano_id)
     db.session.delete(plano)
     db.session.commit()
     return redirect(url_for('plano.lista_planos'))
@@ -67,7 +67,7 @@ def excluir_plano(plano_id):
 
 @PLANO.route('/buscar_plano/<string:nome_do_plano>', methods=['GET'])
 def buscar_plano_por_nome(nome_do_plano):
-    plano = PlanoDeUso.query.filter_by(nome_do_plano=nome_do_plano).first()
+    plano = PlanoDeUso.buscar_plano_por_nome(nome_do_plano)
     if not plano:
         return render_template('lista_planos.html', plano_escolhido=None)
     plano_escolhido = plano.to_dict()
@@ -99,7 +99,7 @@ def cadastrar_plano():
 
 @PLANO.route('/vincular_plano', methods=['GET', 'POST'])
 def vincular_plano():
-    planos = PlanoDeUso.query.all()
+    planos = PlanoDeUso.buscar_todos_planos()
     planos_dict = [plano.to_dict() for plano in planos]
     clientes = Cliente.query.all()
     clientes_dict = [cliente.to_dict() for cliente in clientes]

@@ -39,7 +39,22 @@ class Cliente(db.Model):
             'saldo': self.saldo,
         }
 
-      
+    @classmethod
+    def buscar_todos_clientes(cls):
+
+        return cls.query.all()
+
+    @classmethod
+    def buscar_cliente_por_id(cls, cliente_id):
+
+        return cls.query.get(cliente_id)
+
+    @classmethod
+    def buscar_cliente_por_cpf(cls,cpf):
+
+        return cls.query.filter_by(cpf=cpf).first()
+
+
 class Mesa(db.Model):
     id: so.Mapped[str] = so.mapped_column(sa.String, primary_key=True, default=generate_hex_id)
     numero: so.Mapped[str] = so.mapped_column(sa.String, unique=True, nullable=False)
@@ -51,6 +66,21 @@ class Mesa(db.Model):
             'id': self.id,
             'numero': self.numero
         }
+
+    @classmethod
+    def buscar_mesa_por_id(cls, mesa_id):
+
+        return cls.query.get(mesa_id)
+
+    @classmethod
+    def buscar_mesa_por_numero(cls, numero):
+
+        return cls.query.filter_by(numero=numero).first()
+
+    @classmethod
+    def buscar_todas_mesas(cls):
+
+        return cls.query.all()
 
 
 class PlanoDeUso(db.Model):
@@ -69,6 +99,21 @@ class PlanoDeUso(db.Model):
             'nome_do_plano': self.nome_do_plano,
             'quantidade_de_usos': self.quantidade_de_usos
         }
+
+    @classmethod
+    def buscar_todos_planos(cls):
+
+        return cls.query.all()
+
+    @classmethod
+    def buscar_plano_por_nome(cls, nome_do_plano):
+
+        return cls.query.filter_by(nome_do_plano=nome_do_plano).first()
+
+    @classmethod
+    def buscar_plano_por_id(cls, plano_id):
+
+        return cls.query.get(plano_id)
 
 
 class EstadoReserva(enum.IntEnum):
@@ -110,3 +155,18 @@ class Reserva(db.Model):
             'cliente': self.cliente,
             'mesa': self.mesa
         }
+
+    @classmethod
+    def buscar_todas_reservas(cls):
+
+        return cls.query.all()
+
+    @classmethod
+    def buscar_reserva_por_codigo(cls, codigo):
+
+        return cls.query.filter_by(codigo=codigo).first()
+
+    @classmethod
+    def buscar_reserva_por_id(cls, reserva_id):
+
+        return cls.query.get_or_404(reserva_id)

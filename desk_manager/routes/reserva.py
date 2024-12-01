@@ -1,32 +1,32 @@
 from desk_manager.models import Reserva, Cliente, Mesa, PeriodoReserva
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash
 from desk_manager.extensions import db
 from desk_manager.forms.cadastro import FormCadastroReserva
 import uuid
-from datetime import datetime, date, time
+from datetime import datetime, time
 
 RESERVA = Blueprint('reserva', __name__)
 
 @RESERVA.route('/reservas')
 def lista_reservas():
-    reservas = Reserva.query.all()
+    reservas = Reserva.buscar_todas_reservas()
     reservas_dict = [reserva.to_dict() for reserva in reservas]
     return render_template('lista_reservas.html', reservas=reservas_dict)
 
 @RESERVA.route('/reserva/<string:reserva_id>/editar', methods=['GET', 'POST'])
 def editar_reserva(reserva_id):
-    reserva = Reserva.query.get_or_404(reserva_id)
+    reserva = Reserva.buscar_reserva_por_id(reserva_id)
 
-    form_editar_reserva = FormCadastroReserva()
-
+    form_editar_reserva = FormCadastroReserva(obj=reserva)
+    
     if form_editar_reserva.validate_on_submit():
 
 
         cpf_cliente = form_editar_reserva.cpf_cliente.data  # cpf do cliente do formulário
         numero_mesa = form_editar_reserva.numero_mesa.data  # numero da mesa do formulário
 
-        cliente = db.session.query(Cliente).filter_by(cpf=cpf_cliente).first()
-        mesa = db.session.query(Mesa).filter_by(numero=numero_mesa).first()
+        cliente = Cliente.buscar_cliente_por_cpf(cpf_cliente)
+        mesa = Mesa.buscar_mesa_por_numero(numero_mesa)
 
         if not cliente:
             flash('Cliente não encontrado.', 'warning')
@@ -66,7 +66,7 @@ def editar_reserva(reserva_id):
                 flash('Data inválida.', 'warning')
                 return redirect(url_for('reserva.cadastrar_reserva'))
         
-        for reserva_bd in Reserva.query.all():
+        for reserva_bd in Reserva.buscar_todas_reservas():
 
             if not reserva == reserva_bd:
 
@@ -103,7 +103,7 @@ def editar_reserva(reserva_id):
 
 @RESERVA.route('/reserva/<string:reserva_id>/excluir', methods=['POST'])
 def excluir_reserva(reserva_id):
-    reserva = Reserva.query.get(reserva_id)
+    reserva = Reserva.buscar_reserva_por_id(reserva_id)
     db.session.delete(reserva)
     db.session.commit()
     return redirect(url_for('reserva.lista_reservas'))
@@ -111,7 +111,7 @@ def excluir_reserva(reserva_id):
 
 @RESERVA.route('/buscar_reserva/<string:codigo>', methods=['GET'])
 def buscar_reserva_por_codigo(codigo):
-    reserva = Reserva.query.filter_by(codigo=codigo).first()
+    reserva = Reserva.buscar_reserva_por_codigo(codigo)
     if not reserva:
         return render_template('lista_reservas.html', reserva_escolhida=None)
     return render_template('lista_reservas.html', reserva_escolhida=reserva.to_dict())
@@ -125,8 +125,8 @@ def cadastrar_reserva():
         cpf_cliente = form_cadastro_reserva.cpf_cliente.data  # ID do cliente do formulário
         numero_mesa = form_cadastro_reserva.numero_mesa.data  # ID da mesa do formulário
 
-        cliente = db.session.query(Cliente).filter_by(cpf=cpf_cliente).first()
-        mesa = db.session.query(Mesa).filter_by(numero=numero_mesa).first()
+        cliente = Cliente.buscar_cliente_por_cpf(cpf_cliente)
+        mesa = Mesa.buscar_mesa_por_numero(numero_mesa)
 
         # Verifica se cliente e mesa são válidos
         if not cliente:
