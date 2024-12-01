@@ -48,6 +48,7 @@ def editar_plano(plano_id):
 
     return render_template('editar_planos.html', form_cadastro_plano=form, plano=plano)
 
+
 @PLANO.route('/plano/<string:plano_id>/editar', methods=['POST'])
 def atualizar_plano(plano_id):
     plano = PlanoDeUso.buscar_plano_por_id(plano_id)
@@ -97,6 +98,7 @@ def cadastrar_plano():
         return redirect(url_for('home.home'))
     return render_template('cadastro_plano.html', form_cadastro_plano=form_cadastro_plano)
 
+
 @PLANO.route('/vincular_plano', methods=['GET', 'POST'])
 def vincular_plano():
     planos = PlanoDeUso.buscar_todos_planos()
@@ -124,6 +126,7 @@ def verificar_cliente_existente(cliente_id, plano_id):
         flash(f'O cliente {cliente.nome} já está vinculado ao plano {plano.nome_do_plano}', 'alert alert-warning')
         return None
     return cliente, plano
+
 
 def verificar_botao_apertado():
     if 'vincular_plano_btn' in request.form:
