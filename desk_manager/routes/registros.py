@@ -32,7 +32,7 @@ def registrar_chegada(reserva_id):
             return  redirect(url_for('registros.listagem', reserva_id=reserva.id))
     else:
         flash(f"Só se pode registrar chegada de uma reserva de hoje {hoje}", "warning")
-        return redirect(url_for('registro.listagem', reserva_id=reserva.id))
+        return redirect(url_for('registros.listagem', reserva_id=reserva.id))
 
 @REGISTROS.route('/reservas/<string:reserva_id>/registrar_saida', methods=['POST'])
 def registrar_saida(reserva_id):
@@ -51,7 +51,7 @@ def registrar_saida(reserva_id):
             return  redirect(url_for('registros.listagem', reserva_id=reserva.id))
     else:
         flash(f"Só se pode registrar saída de uma reserva de hoje {hoje}", "warning")
-        return redirect(url_for('registro.listagem', reserva_id=reserva.id))
+        return redirect(url_for('registros.listagem', reserva_id=reserva.id))
 
 
 @REGISTROS.route('/reservas/<string:reserva_id>/registrar_cancelamento', methods=['POST'])
@@ -67,8 +67,10 @@ def registrar_cancelamento(reserva_id):
             flash("Cancelamento registrado com sucesso!", "warning")
         else:
             flash("O cancelamento só pode ser feito até 24 horas antes da data da reserva.", "warning")
+            return redirect(url_for('registros.listagem', reserva_id=reserva.id))
     else:
         flash("Só pode se cancelar uma reserva que ainda não foi iniciada", "warning")
+        return redirect(url_for('registros.listagem', reserva_id=reserva.id))
     return  redirect(url_for('registros.listagem', reserva_id=reserva.id))
 
 @REGISTROS.route('/buscar_listagem/<string:codigo>', methods=['GET'])
