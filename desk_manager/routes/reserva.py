@@ -19,7 +19,7 @@ def editar_reserva(reserva_id):
 
     form_editar_reserva = FormCadastroReserva(obj=reserva)
     
-    if form_editar_reserva.validate_on_submit():
+    if campos_prenchidos(form_editar_reserva):
 
 
         cpf_cliente = form_editar_reserva.cpf_cliente.data  # cpf do cliente do formulário
@@ -30,59 +30,29 @@ def editar_reserva(reserva_id):
 
         if not cliente:
             flash('Cliente não encontrado.', 'warning')
-            return redirect(url_for('reserva.cadastrar_reserva'))
+            return redirect(url_for('reserva.lista_reservas'))
         if not mesa:
             flash('Mesa não encontrada.', 'warning')
-            return redirect(url_for('reserva.cadastrar_reserva'))
+            return redirect(url_for('reserva.lista_reservas'))
 
         # Verifica se o cliente tem saldo para reservar
         if cliente.saldo < 1:
             flash('Cliente não tem saldo suficiente', 'warning')
-            return redirect(url_for('reserva.cadastrar_reserva'))
+            return redirect(url_for('reserva.lista_reservas'))
 
         data_reserva = form_editar_reserva.data.data
         data_formatada = data_reserva.strftime("%d%m%Y")
 
         periodo_reserva_value = int(form_editar_reserva.periodo.data)
         periodo_reserva = PeriodoReserva(periodo_reserva_value)
-
-
-        # Verifica se data e periodo da reserva são válidos
-        hoje = datetime.now().date()
-        hora_atual = datetime.now().time()
-
-        if data_reserva < hoje:
-            flash('Data inválida.', 'warning')
-            return redirect(url_for('reserva.cadastrar_reserva'))
-
-        if data_reserva == hoje:
-            if periodo_reserva == PeriodoReserva.MANHA and hora_atual >= time(11, 59):
-                flash('Data inválida.', 'warning')
-                return redirect(url_for('reserva.cadastrar_reserva'))
-            elif periodo_reserva == PeriodoReserva.TARDE and hora_atual >= time(16, 59):
-                flash('Data inválida.', 'warning')
-                return redirect(url_for('reserva.cadastrar_reserva'))
-            elif periodo_reserva == PeriodoReserva.NOITE and hora_atual >= time(21, 0):
-                flash('Data inválida.', 'warning')
-                return redirect(url_for('reserva.cadastrar_reserva'))
         
-        for reserva_bd in Reserva.buscar_todas_reservas():
+        if cliente_tem_reserva(cliente, data_reserva, periodo_reserva_value):
+            flash('O cliente já tem outra reserva nesse período.', 'warning')
+            return redirect(url_for('reserva.lista_reservas'))
 
-            if not reserva == reserva_bd:
-
-                if (cliente == reserva_bd.cliente and
-                    data_reserva == reserva_bd.data and
-                    periodo_reserva_value == reserva_bd.periodo and
-                    reserva_bd.estado != 2):
-                    flash('O cliente já tem outra reserva nesse período.', 'warning')
-                    return redirect(url_for('reserva.cadastrar_reserva'))
-
-                if (data_reserva == reserva_bd.data and
-                    periodo_reserva_value == reserva_bd.periodo and
-                    mesa == reserva_bd.mesa and
-                    reserva_bd.estado != 2):
-                    flash('A mesa já está resevada neste período.', 'warning')
-                    return redirect(url_for('reserva.cadastrar_reserva'))
+        if mesa_tem_reserva(mesa, data_reserva, periodo_reserva_value):
+            flash('A mesa já está resevada neste período.', 'warning')
+            return redirect(url_for('reserva.lista_reservas'))
 
         codigo_reserva = str(data_formatada) + str(periodo_reserva) + str(numero_mesa)
         reserva.codigo = codigo_reserva
@@ -108,7 +78,6 @@ def excluir_reserva(reserva_id):
     db.session.commit()
     return redirect(url_for('reserva.lista_reservas'))
     
-
 @RESERVA.route('/buscar_reserva/<string:codigo>', methods=['GET'])
 def buscar_reserva_por_codigo(codigo):
     reserva = Reserva.buscar_reserva_por_codigo(codigo)
@@ -119,7 +88,7 @@ def buscar_reserva_por_codigo(codigo):
 @RESERVA.route('/cadastro_reserva', methods=['GET', 'POST'])
 def cadastrar_reserva():
     form_cadastro_reserva = FormCadastroReserva()
-    if form_cadastro_reserva.validate_on_submit():
+    if campos_prenchidos(form_cadastro_reserva):
         id = uuid.uuid4().hex[:8]
 
         cpf_cliente = form_cadastro_reserva.cpf_cliente.data  # ID do cliente do formulário
@@ -151,37 +120,17 @@ def cadastrar_reserva():
         hoje = datetime.now().date()
         hora_atual = datetime.now().time()
 
-        if data_reserva < hoje:
+        if not data_futura(hoje, hora_atual, data_reserva, periodo_reserva):
             flash('Data inválida.', 'warning')
             return redirect(url_for('reserva.cadastrar_reserva'))
 
-        if data_reserva == hoje:
-            if periodo_reserva == PeriodoReserva.MANHA and hora_atual >= time(11, 59):
-                flash('Data inválida.', 'warning')
-                return redirect(url_for('reserva.cadastrar_reserva'))
-            elif periodo_reserva == PeriodoReserva.TARDE and hora_atual >= time(16, 59):
-                flash('Data inválida.', 'warning')
-                return redirect(url_for('reserva.cadastrar_reserva'))
-            elif periodo_reserva == PeriodoReserva.NOITE and hora_atual >= time(21, 59):
-                flash('Data inválida.', 'warning')
-                return redirect(url_for('reserva.cadastrar_reserva'))
+        if cliente_tem_reserva(cliente, data_reserva, periodo_reserva_value):
+            flash('O cliente já tem outra reserva nesse período.', 'warning')
+            return redirect(url_for('reserva.cadastrar_reserva'))
 
-
-        for reserva_bd in Reserva.query.all():
-
-            if (cliente == reserva_bd.cliente and
-                data_reserva == reserva_bd.data.date() and
-                periodo_reserva_value == reserva_bd.periodo and
-                reserva_bd.estado != 2):
-                flash('O cliente já tem outra reserva nesse período.', 'warning')
-                return redirect(url_for('reserva.cadastrar_reserva'))
-
-            if (data_reserva == reserva_bd.data.date() and
-                periodo_reserva_value == reserva_bd.periodo and
-                mesa == reserva_bd.mesa and
-                reserva_bd.estado != 2):
-                flash('A mesa já está resevada neste período.', 'warning')
-                return redirect(url_for('reserva.cadastrar_reserva'))
+        if mesa_tem_reserva(mesa, data_reserva, periodo_reserva_value):
+            flash('A mesa já está resevada neste período.', 'warning')
+            return redirect(url_for('reserva.cadastrar_reserva'))
         
         # Define o código (data + digito do periodo + numero da mesa)
         codigo_reserva = str(data_formatada) + str(periodo_reserva) + str(numero_mesa)
@@ -203,3 +152,38 @@ def cadastrar_reserva():
         return redirect(url_for('reserva.lista_reservas'))
     return render_template('cadastro_reserva.html', form_cadastro_reserva=form_cadastro_reserva)
 
+
+def campos_prenchidos(form):
+    return form.validate_on_submit()
+
+def data_futura(hoje, hora_atual, data_reserva, periodo_reserva):
+    if data_reserva < hoje:
+        return False
+    
+    if (data_reserva == hoje and
+        ((periodo_reserva == PeriodoReserva.MANHA and hora_atual >= time(11, 59))
+        or (periodo_reserva == PeriodoReserva.TARDE and hora_atual >= time(16, 59))
+        or (periodo_reserva == PeriodoReserva.NOITE and hora_atual >= time(21, 59)))):
+        return False
+    
+    return True
+
+def cliente_tem_reserva(cliente, data_reserva, periodo_reserva_value):
+    for reserva_bd in Reserva.query.all():
+        if (cliente == reserva_bd.cliente and
+                data_reserva == reserva_bd.data.date() and
+                periodo_reserva_value == reserva_bd.periodo and
+                reserva_bd.estado != 2):
+            return True
+    return False
+
+def mesa_tem_reserva(mesa, data_reserva, periodo_reserva_value):
+    for reserva_bd in Reserva.query.all():
+        if (data_reserva == reserva_bd.data.date() and
+                periodo_reserva_value == reserva_bd.periodo and
+                mesa == reserva_bd.mesa and
+                reserva_bd.estado != 2):
+            return True
+    return False
+
+        
